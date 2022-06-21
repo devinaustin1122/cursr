@@ -1,3 +1,7 @@
+* {
+  cursor: url("./circle.svg"), auto;
+}
+
 #mouse-background {
   position: absolute;
   width: 3rem;
