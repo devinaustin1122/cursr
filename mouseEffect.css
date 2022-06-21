@@ -1,11 +1,15 @@
+/* This has to be imported before custom stylesheet for link tags to applied */
+
 * {
-  cursor: url("./circle.svg"), auto;
+  cursor: inherit;
 }
 
 #mouse-background {
   position: absolute;
-  width: 3rem;
-  height: 3rem;
-  border-radius: 50%;
-  border: solid 1px black;
+  width: 4rem;
+  height: 4rem;
+  pointer-events: none;
+  overflow: visible;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
