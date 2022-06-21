@@ -10,12 +10,16 @@
     <title>Document</title>
   </head>
   <body>
-    <a href="https://scrollrevealjs.org/api/debug.html">Link</a>
+    <button onclick="followClick()">follow</button>
+    <button onclick="followClick()">blur</button>
+
     <script>
-      mouse({
-        svg: "./circle.svg",
-        bg: "./me.svg",
-      }).effect({ delay: 0.2 });
+      function followClick() {
+        mouse({
+          svg: "./circle.svg",
+          bg: "./me.svg",
+        }).effect({ delay: 0.2 });
+      }
     </script>
   </body>
 </html>
