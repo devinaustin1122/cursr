@@ -11,6 +11,11 @@ function mouse(configs, event) {
     : document.createElement("div");
   let html = document.getElementsByTagName("html")[0];
 
+  //*************************************************************
+  // Need to start thinking about handling errors.
+  // I wonder if there are any functional design patterns
+  //*************************************************************
+
   clear();
   init();
 

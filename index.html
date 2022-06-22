@@ -43,11 +43,11 @@
     <script>
       function cursorClick(event) {
         mouse({
-          svg: "./circle.svg",
+          svg: "./images/circle.svg",
         });
       }
       function followClick(event) {
-        mouse({ bg: "./me.svg" }, event).effect({ delay: 0.2 });
+        mouse({ bg: "./images/me.svg" }, event).effect({ delay: 0.2 });
       }
       function trailClick(event) {
         window.addEventListener("mousemove", (event) => {
