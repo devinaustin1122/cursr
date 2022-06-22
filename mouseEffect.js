@@ -45,8 +45,9 @@ function mouse(configs, event) {
     updatePosition(options.delay);
 
     // if mouse and background position are close, end animation.
+    // this might be able to be turned into it's own function.
     if (Math.abs(dX + dY) > 0.1) {
-      requestAnimationFrame(() => animate(options));
+      requestAnimationFrame(() => follow(options));
     } else {
       started = false;
     }
