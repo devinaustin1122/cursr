@@ -55,6 +55,8 @@ function mouse(configs, event) {
 
   // might want to use canvas here. might be difficult with event object.
   // trying to keep everything clean.
+  //
+  // https://www.kirupa.com/canvas/creating_motion_trails.htm
   function trail() {}
 
   function setPosition(x, y) {
