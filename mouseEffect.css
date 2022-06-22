@@ -13,3 +13,29 @@
   background-size: contain;
   background-repeat: no-repeat;
 }
+
+.circle {
+  cursor: url("./circle.svg"), auto;
+}
+
+.square {
+  cursor: url("./square.svg"), auto;
+}
+
+.trailing {
+  position: absolute;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  animation: fade 1s forwards;
+  pointer-events: none;
+}
+
+@keyframes fade {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

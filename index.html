@@ -10,15 +10,53 @@
     <title>Document</title>
   </head>
   <body>
-    <button onclick="followClick()">follow</button>
-    <button onclick="followClick()">blur</button>
-
+    <div class="content">
+      <h1>Mouse Effect</h1>
+      <p>Javascript library for animating your mouse actions.</p>
+      <button onclick="cursorClick(event)">cursor</button>
+      <button onclick="followClick(event)">follow</button>
+      <button onclick="trailClick(event)">trail</button>
+      <hr />
+    </div>
     <script>
-      function followClick() {
+      //   window.addEventListener("mousemove", (event) => {
+      //     let span = document.createElement("div");
+      //     span.classList.toggle("trailing");
+      //     span.style.backgroundColor = "black";
+      //     span.style.top = `${event.pageY}px`;
+      //     span.style.left = `${event.pageX}px`;
+      //     document.body.appendChild(span);
+      //     setTimeout(() => {
+      //       span.remove();
+      //     }, 1000);
+      //   });
+
+      function cursorClick(event) {
         mouse({
           svg: "./circle.svg",
-          bg: "./me.svg",
-        }).effect({ delay: 0.2 });
+        });
+      }
+      function followClick(event) {
+        mouse(
+          {
+            svg: "./square.svg",
+            bg: "./me.svg",
+          },
+          event
+        ).effect({ delay: 0.2 });
+      }
+      function trailClick(event) {
+        window.addEventListener("mousemove", (event) => {
+          let span = document.createElement("div");
+          span.classList.toggle("trailing");
+          span.style.backgroundColor = "black";
+          span.style.top = `${event.pageY}px`;
+          span.style.left = `${event.pageX}px`;
+          document.body.appendChild(span);
+          setTimeout(() => {
+            span.remove();
+          }, 1000);
+        });
       }
     </script>
   </body>
