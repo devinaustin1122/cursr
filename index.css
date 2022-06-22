@@ -1,5 +1,16 @@
 @import url("https://fonts.googleapis.com/css2?family=League+Gothic&display=swap");
 
+:root {
+  --primary-color: white;
+  --secondary-color: black;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 h1,
 p {
   margin: 0;
@@ -12,12 +23,16 @@ button {
 }
 
 html {
-  display: flex;
-  justify-content: center;
   font-family: "League Gothic", sans-serif;
   min-height: 100vh;
   /* to prevent scrollbars */
   overflow: hidden;
+  color: var(--secondary-color);
+}
+
+body {
+  display: flex;
+  justify-content: center;
 }
 
 h1 {
@@ -29,18 +44,54 @@ p {
 }
 
 button {
-  background-color: white;
+  background-color: var(--primary-color);
   padding: 1rem 2rem;
   margin-right: 1rem;
   margin-bottom: 1rem;
   font-size: 1.5rem;
 }
 
-hr {
-  border-top: 2px solid black;
+code {
+  display: flex;
+  flex-direction: column;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border-radius: 1rem;
+  background-color: var(--secondary-color);
+  color: var(--primary-color);
+  white-space: break-spaces;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
 }
 
 .content {
-  padding: 3rem 2rem;
-  min-width: 50rem;
+  width: 100%;
+  padding: 3rem 1rem;
+}
+
+.buttons {
+  margin: 2rem 0;
+}
+
+.link {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 1rem;
+}
+
+.link__img {
+  fill: var(--secondary-color);
+  width: 2rem;
+  height: 2rem;
+}
+
+@media screen and (min-width: 850px) {
+  .content {
+    padding: 3rem 1rem;
+    max-width: 50rem;
+  }
 }

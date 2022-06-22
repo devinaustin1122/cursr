@@ -2,16 +2,18 @@
 
 * {
   cursor: inherit;
+  z-index: 0;
 }
 
 #mouse-background {
   position: absolute;
-  width: 4rem;
-  height: 4rem;
+  width: 2rem;
+  height: 2rem;
   pointer-events: none;
   overflow: visible;
   background-size: contain;
   background-repeat: no-repeat;
+  z-index: 1;
 }
 
 .circle {
