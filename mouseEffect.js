@@ -35,13 +35,9 @@ function mouse(configs, event) {
       mouseY = e.pageY;
       // start animation if started is false.
       if (!started) {
-        animate(options);
+        follow({ delay: 1, ...options });
       }
     });
-  }
-
-  function animate(options) {
-    follow({ delay: 1, ...options });
   }
 
   function follow(options) {
@@ -56,6 +52,8 @@ function mouse(configs, event) {
     }
   }
 
+  // might want to use canvas here. might be difficult with event object.
+  // trying to keep everything clean.
   function trail() {}
 
   function setPosition(x, y) {
