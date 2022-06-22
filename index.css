@@ -25,10 +25,7 @@ button {
 
 html {
   font-family: "League Gothic", sans-serif;
-  min-height: 100vh;
   /* to prevent scrollbars */
-  overflow: hidden;
-  color: var(--secondary-color);
 }
 
 body {

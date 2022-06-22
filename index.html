@@ -72,8 +72,8 @@
       function trailClick(event) {
         window.addEventListener("mousemove", (event) => {
           let span = document.createElement("div");
+          span.style.backgroundImage = "url('./images/polygon.svg')";
           span.classList.toggle("trailing");
-          span.style.backgroundColor = "black";
           span.style.top = `${event.pageY}px`;
           span.style.left = `${event.pageX}px`;
           document.body.appendChild(span);

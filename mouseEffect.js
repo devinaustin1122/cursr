@@ -16,38 +16,47 @@ function mouse(configs, event) {
   // I wonder if there are any functional design patterns
   //*************************************************************
 
-  clear();
-  init();
+  // update cursor if configuration exists
+  html.style.cursor = configs.svg ? `url(${configs.svg}), auto` : "auto";
 
-  function init() {
-    // update cursor
-    html.style.cursor = `url(${configs.svg}), auto`;
+  // update cursor background img if configuration exists
+  background.setAttribute("id", "mouse-background");
+  background.style.backgroundImage = configs.bg
+    ? `url("${configs.bg}")`
+    : "unset";
+  document.body.appendChild(background);
 
-    // update cursor background
-    background.setAttribute("id", "mouse-background");
-    background.style.backgroundImage = configs.bg
-      ? `url("${configs.bg}")`
-      : "unset";
-    document.body.appendChild(background);
-    setPosition(divX, divY);
+  //position cursor background
+  setPosition(divX, divY);
+
+  function effect(options) {
+    document.addEventListener("mousemove", (e) => {
+      mouseX = e.pageX;
+      mouseY = e.pageY;
+      // start animation if started is false.
+      if (!started) {
+        animate(options);
+      }
+    });
   }
 
   function animate(options) {
-    let defaults = {
-      delay: 1,
-      ...options,
-    };
+    follow({ delay: 1, ...options });
+  }
 
+  function follow(options) {
     started = true;
-    updatePosition(defaults.delay);
+    updatePosition(options.delay);
 
     // if mouse and background position are close, end animation.
     if (Math.abs(dX + dY) > 0.1) {
-      requestAnimationFrame(() => animate(defaults));
+      requestAnimationFrame(() => animate(options));
     } else {
       started = false;
     }
   }
+
+  function trail() {}
 
   function setPosition(x, y) {
     background.style.left = `${x + 5 - background.offsetHeight / 2}px`;
@@ -60,23 +69,6 @@ function mouse(configs, event) {
     divX += dX * delay;
     divY += dY * delay;
     setPosition(divX, divY);
-  }
-
-  // clear function
-  function clear() {
-    background.remove();
-    html.style.cursor = "auto";
-  }
-
-  function effect(options) {
-    document.addEventListener("mousemove", (e) => {
-      mouseX = e.pageX;
-      mouseY = e.pageY;
-      // start animation if started is false.
-      if (!started) {
-        animate(options);
-      }
-    });
   }
 
   let self = {

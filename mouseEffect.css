@@ -26,11 +26,13 @@
 
 .trailing {
   position: absolute;
-  width: 5px;
-  height: 5px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
   animation: fade 1s forwards;
   pointer-events: none;
+  background-size: contain;
+  background-repeat: no-repeat;
 }
 
 @keyframes fade {
