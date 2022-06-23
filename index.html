@@ -5,12 +5,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./index.css" />
-    <link rel="stylesheet" href="./mouseEffect.css" />
-    <script src="./mouseEffect.js"></script>
+    <!-- <link rel="stylesheet" href="./mouseEffect.css" /> -->
+    <script src="./mouseEffectV2.js"></script>
     <title>M.E.</title>
   </head>
   <body>
-    <div class="content">
+    <div class="content" id="wrapper">
       <header>
         <div class="text">
           <h1>Mouse Effect</h1>
@@ -37,9 +37,9 @@
         </a>
       </header>
       <div class="buttons">
-        <button onclick="cursorClick(event)">cursor</button>
-        <button onclick="followClick(event)">follow</button>
-        <button onclick="trailClick(event)">trail</button>
+        <button>cursor</button>
+        <button>follow</button>
+        <button>trail</button>
       </div>
       <!-- prettier-ignore -->
       <code>
@@ -61,27 +61,8 @@
       </p>
     </div>
     <script>
-      function cursorClick(event) {
-        mouse({
-          svg: "./images/circle.svg",
-        });
-      }
-      function followClick(event) {
-        mouse({ bg: "./images/me.svg" }, event).effect({ delay: 0.2 });
-      }
-      function trailClick(event) {
-        window.addEventListener("mousemove", (event) => {
-          let span = document.createElement("div");
-          span.style.backgroundImage = "url('./images/polygon.svg')";
-          span.classList.toggle("trailing");
-          span.style.top = `${event.pageY}px`;
-          span.style.left = `${event.pageX}px`;
-          document.body.appendChild(span);
-          setTimeout(() => {
-            span.remove();
-          }, 1000);
-        });
-      }
+      //   mouse("wrapper", null);
+      mouse();
     </script>
   </body>
 </html>

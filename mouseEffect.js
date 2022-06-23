@@ -57,7 +57,10 @@ function mouse(configs, event) {
   // trying to keep everything clean.
   //
   // https://www.kirupa.com/canvas/creating_motion_trails.htm
-  function trail() {}
+  function trail() {
+    clone = background.cloneNode();
+    html.appendChild(clone);
+  }
 
   function setPosition(x, y) {
     background.style.left = `${x + 5 - background.offsetHeight / 2}px`;
@@ -71,6 +74,8 @@ function mouse(configs, event) {
     divY += dY * delay;
     setPosition(divX, divY);
   }
+
+  function fade(element) {}
 
   let self = {
     effect,
