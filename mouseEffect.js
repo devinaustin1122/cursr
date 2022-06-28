@@ -3,10 +3,15 @@ function mouse(wrapper, options) {
   let context = canvas.getContext("2d");
   let satellites = [];
   let cursor = { x: 0, y: 0 };
+  let configs = {
+    cursor: "./images/cursor.svg",
+    bg: null,
+    ...options,
+  };
 
   // initialization function
   function init() {
-    document.body.style.cursor = "url('./images/ellipse.svg'), progress";
+    document.body.style.cursor = `url('${configs.cursor}'), pointer`;
     canvas.style.pointerEvents = "none";
     // canvas.style.cursor = "progress";
 
@@ -32,20 +37,46 @@ function mouse(wrapper, options) {
       cursor.y = e.clientY;
     });
 
-    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.2));
-    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.3));
-    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.8));
-    loop();
+    if (configs.bg) {
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      satellites.push(new Satellite(configs.bg, 0, 0, 10, 10, 0.08));
+      copy();
+    }
   }
 
-  // recursive function for animations
-  function loop() {
+  // recursive function for following
+  function follow() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < satellites.length; i++) {
-      satellites[i].update(cursor.x, cursor.y);
+      let satellite = satellites[i];
+      satellite.dx = (cursor.x - satellite.x) * satellite.delay;
+      satellite.x += satellite.dx;
+      satellite.dy = (cursor.y - satellite.y) * satellite.delay;
+      satellite.y += satellite.dy;
+      satellite.draw();
+    }
+    requestAnimationFrame(follow);
+  }
+
+  // recursive function for copying
+  function copy() {
+    context.clearRect(0, 0, canvas.width, canvas.height);
+
+    let tmp = satellites.pop();
+    tmp.x = cursor.x;
+    tmp.y = cursor.y;
+    satellites.unshift(tmp);
+    for (let i = 0; i < satellites.length; i++) {
       satellites[i].draw();
     }
-    requestAnimationFrame(loop);
+    requestAnimationFrame(copy);
   }
 
   // function used to prerender images
@@ -61,19 +92,13 @@ function mouse(wrapper, options) {
   // satellite images used to create effects
   function Satellite(src, x, y, width, height, delay) {
     this.image = preRender(src);
-    this.x = cursor.x;
-    this.y = cursor.y;
+    this.x = x;
+    this.y = y;
     this.dx = 0;
     this.dy = 0;
     this.height = height;
     this.width = width;
-
-    this.update = (x, y) => {
-      this.dx = (x - this.x) * delay;
-      this.x += this.dx;
-      this.dy = (y - this.y) * delay;
-      this.y += this.dy;
-    };
+    this.delay = delay;
 
     this.draw = () => {
       context.drawImage(this.image, this.x, this.y);
