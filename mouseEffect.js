@@ -6,7 +6,9 @@ function mouse(wrapper, options) {
 
   // initialization function
   function init() {
+    document.body.style.cursor = "url('./images/ellipse.svg'), progress";
     canvas.style.pointerEvents = "none";
+    // canvas.style.cursor = "progress";
 
     if (wrapper) {
       let wrapperElement = document.getElementById("wrapper");
@@ -31,20 +33,19 @@ function mouse(wrapper, options) {
     });
 
     satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.2));
-    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.4));
-    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.6));
+    satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.3));
     satellites.push(new Satellite("./images/circle.svg", 0, 0, 10, 10, 0.8));
-    recurse();
+    loop();
   }
 
   // recursive function for animations
-  function recurse() {
+  function loop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < satellites.length; i++) {
       satellites[i].update(cursor.x, cursor.y);
       satellites[i].draw();
     }
-    requestAnimationFrame(recurse);
+    requestAnimationFrame(loop);
   }
 
   // function used to prerender images

@@ -91,6 +91,7 @@ header {
   flex-direction: column;
   justify-content: flex-start;
   margin: 1rem;
+  align-self: flex-start;
 }
 
 .link__img {
