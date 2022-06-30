@@ -3,6 +3,8 @@ function mouse(wrapper, options) {
   let context = canvas.getContext("2d");
   let elements = [];
   let cursor = { x: 0, y: 0 };
+  let dimensions = { width: 10, height: 10 };
+
   let configs = {
     cursor: "./images/cursor.svg",
     bg: null,
@@ -31,46 +33,34 @@ function mouse(wrapper, options) {
       document.body.appendChild(canvas);
     }
 
-    document.addEventListener("mousemove", (e) => {
-      cursor.x = e.clientX;
-      cursor.y = e.clientY;
-    });
+    let tracking = false;
 
-    let dimensions = { width: 10, height: 10 };
-
-    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, follow));
-    // loop();
-
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
-    copy();
+    if (tracking) {
+      document.addEventListener("mousemove", (e) => {
+        cursor.x = e.clientX;
+        cursor.y = e.clientY;
+      });
+      elements.push(
+        factory(configs.bg, { x: cursor.x, y: cursor.y }, dimensions, follow)
+      );
+    } else {
+      document.addEventListener("mousemove", (e) => {
+        elements.push(
+          factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, count)
+        );
+      });
+    }
+    loop();
   }
 
   // recursive function for following
   function loop() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < elements.length; i++) {
-      elements[i].update();
       elements[i].draw();
+      elements[i].update();
     }
     requestAnimationFrame(loop);
-  }
-
-  // recursive function for copying
-  function copy() {
-    context.clearRect(0, 0, canvas.width, canvas.height);
-    let element = elements.pop();
-    element.coordinates.x = cursor.x;
-    element.coordinates.y = cursor.y;
-    elements.unshift(element);
-    for (let i = 0; i < elements.length; i++) {
-      elements[i].draw();
-    }
-    requestAnimationFrame(copy);
   }
 
   // function used to prerender images
@@ -91,11 +81,20 @@ function mouse(wrapper, options) {
       dimensions,
       dx: 0,
       dy: 0,
+      count: 0,
       update,
       draw() {
         context.drawImage(this.image, this.coordinates.x, this.coordinates.y);
       },
     };
+  }
+
+  //counting
+  function count() {
+    this.count++;
+    if (this.count > 10 && elements.length > 1) {
+      elements.splice(elements.indexOf(this), 1);
+    }
   }
 
   // update functions

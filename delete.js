@@ -8,6 +8,7 @@ function mouse(wrapper, options) {
     bg: null,
     ...options,
   };
+  let dimensions = { width: 10, height: 10 };
 
   // initialization function
   function init() {
@@ -36,19 +37,16 @@ function mouse(wrapper, options) {
       cursor.y = e.clientY;
     });
 
-    let coordinates = { x: 0, y: 0 };
-    let dimensions = { width: 10, height: 10 };
+    elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, follow));
+    loop();
 
-    // elements.push(factory(configs.bg, coordinates, dimensions, follow));
-    // loop();
-
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    elements.push(factory(configs.bg, coordinates, dimensions, null));
-    copy();
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // elements.push(factory(configs.bg, { x: 0, y: 0 }, dimensions, null));
+    // copy();
   }
 
   // recursive function for following
@@ -65,13 +63,13 @@ function mouse(wrapper, options) {
   function copy() {
     context.clearRect(0, 0, canvas.width, canvas.height);
     let element = elements.pop();
-    element.coordinates = cursor;
+    element.coordinates.x = cursor.x;
+    element.coordinates.y = cursor.y;
     elements.unshift(element);
-    console.log(elements);
     for (let i = 0; i < elements.length; i++) {
       elements[i].draw();
     }
-    // requestAnimationFrame(copy);
+    requestAnimationFrame(copy);
   }
 
   // function used to prerender images
@@ -103,6 +101,12 @@ function mouse(wrapper, options) {
   function follow() {
     this.dx = (cursor.x - this.coordinates.x) * 0.04;
     this.coordinates.x += this.dx;
+    this.dy = (cursor.y - this.coordinates.y) * 0.04;
+    this.coordinates.y += this.dy;
+  }
+
+  // update functions
+  function float() {
     this.dy = (cursor.y - this.coordinates.y) * 0.04;
     this.coordinates.y += this.dy;
   }
