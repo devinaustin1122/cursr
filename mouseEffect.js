@@ -46,7 +46,9 @@ function mouse(wrapper, options) {
     } else {
       document.addEventListener("mousemove", (e) => {
         elements.push(
-          factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, count)
+            // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, countDown)
+            factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, float)
+            // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, fall)
         );
       });
     }
@@ -63,6 +65,52 @@ function mouse(wrapper, options) {
     requestAnimationFrame(loop);
   }
 
+  // element factory
+  function factory(src, coordinates, dimensions, update) {
+    return {
+      image: preRender(src),
+      coordinates,
+      dimensions,
+      dx: 0,
+      dy: 0,
+      count: 0,
+      opacity: 0.5,
+      update,
+      draw() {
+        context.globalAlpha = this.opacity;
+        context.drawImage(this.image, this.coordinates.x, this.coordinates.y);
+      },
+    };
+  }
+
+  //float
+  function float() {
+    this.coordinates.y -= 10;
+    countDown.call(this);  
+  }
+
+  //fall
+  function fall() {
+    this.coordinates.y += 10;
+    countDown.call(this);  
+  }
+
+  // update functions
+  function follow() {
+    this.dx = (cursor.x - this.coordinates.x) * 0.1;
+    this.coordinates.x += this.dx;
+    this.dy = (cursor.y - this.coordinates.y) * 0.1;
+    this.coordinates.y += this.dy;
+  }
+
+  function countDown() {
+    if (this.count > 100 && elements.length) {
+      elements.splice(elements.indexOf(this), 1);
+    }
+    this.opacity = 1 / this.count;
+    this.count++;
+  }
+
   // function used to prerender images
   function preRender(src) {
     let canvasOS = document.createElement("canvas");
@@ -73,37 +121,6 @@ function mouse(wrapper, options) {
     return canvasOS;
   }
 
-  // element factory
-  function factory(src, coordinates, dimensions, update) {
-    return {
-      image: preRender(src),
-      coordinates,
-      dimensions,
-      dx: 0,
-      dy: 0,
-      count: 0,
-      update,
-      draw() {
-        context.drawImage(this.image, this.coordinates.x, this.coordinates.y);
-      },
-    };
-  }
-
-  //counting
-  function count() {
-    this.count++;
-    if (this.count > 10 && elements.length > 1) {
-      elements.splice(elements.indexOf(this), 1);
-    }
-  }
-
-  // update functions
-  function follow() {
-    this.dx = (cursor.x - this.coordinates.x) * 0.04;
-    this.coordinates.x += this.dx;
-    this.dy = (cursor.y - this.coordinates.y) * 0.04;
-    this.coordinates.y += this.dy;
-  }
 
   init();
 }
