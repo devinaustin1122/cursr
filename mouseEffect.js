@@ -33,7 +33,7 @@ function mouse(wrapper, options) {
       document.body.appendChild(canvas);
     }
 
-    let tracking = false;
+    let tracking = true;
 
     if (tracking) {
       document.addEventListener("mousemove", (e) => {
@@ -46,9 +46,9 @@ function mouse(wrapper, options) {
     } else {
       document.addEventListener("mousemove", (e) => {
         elements.push(
-            // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, countDown)
-            factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, float)
-            // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, fall)
+          // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, countDown)
+          // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, float)
+          factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, fall)
         );
       });
     }
@@ -83,17 +83,20 @@ function mouse(wrapper, options) {
     };
   }
 
-  //float
+  // float
   function float() {
     this.coordinates.y -= 10;
-    countDown.call(this);  
+    countDown.call(this);
   }
 
-  //fall
+  // fall
   function fall() {
     this.coordinates.y += 10;
-    countDown.call(this);  
+    countDown.call(this);
   }
+
+  // https://www.youtube.com/watch?v=Zdicf60eNzA
+  // good start
 
   // update functions
   function follow() {
@@ -120,7 +123,6 @@ function mouse(wrapper, options) {
     image.onload = () => contextOS.drawImage(image, 0, 0);
     return canvasOS;
   }
-
 
   init();
 }
