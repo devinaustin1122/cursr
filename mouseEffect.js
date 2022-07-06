@@ -41,13 +41,11 @@ function mouse(wrapper, options) {
         cursor.y = e.clientY;
       });
       elements.push(
-        factory(configs.bg, { x: cursor.x, y: cursor.y }, dimensions, follow)
+        factory(configs.bg, { x: cursor.x, y: cursor.y }, dimensions, gravity)
       );
     } else {
       document.addEventListener("mousemove", (e) => {
         elements.push(
-          // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, countDown)
-          // factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, float)
           factory(configs.bg, { x: e.clientX, y: e.clientY }, dimensions, fall)
         );
       });
@@ -74,7 +72,7 @@ function mouse(wrapper, options) {
       dx: 0,
       dy: 0,
       count: 0,
-      opacity: 0.5,
+      opacity: 1,
       update,
       draw() {
         context.globalAlpha = this.opacity;
@@ -95,8 +93,11 @@ function mouse(wrapper, options) {
     countDown.call(this);
   }
 
-  // https://www.youtube.com/watch?v=Zdicf60eNzA
-  // good start
+  // update functions
+  function gravity() {
+    this.coordinates.x = cursor.x;
+    this.coordinates.y = cursor.y;
+  }
 
   // update functions
   function follow() {
