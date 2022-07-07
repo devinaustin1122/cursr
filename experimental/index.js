@@ -29,10 +29,10 @@ function mouse() {
 function elastic() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  let tmp = subtract(cursor, particle);
+  let spring = subtract(cursor, particle);
 
-  velocity.x = velocity.x * 0.9 + (tmp.x / length) * 0.2;
-  velocity.y = velocity.y * 0.9 + (tmp.y / length) * 0.2;
+  velocity.x = velocity.x * 0.9 + (spring.x / length) * 0.2;
+  velocity.y = velocity.y * 0.9 + (spring.y / length) * 0.2;
 
   particle.x = particle.x + velocity.x;
   particle.y = particle.y + velocity.y;
