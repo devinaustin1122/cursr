@@ -31,8 +31,8 @@ function elastic() {
 
   let spring = subtract(cursor, particle);
 
-  velocity.x = velocity.x * 0.9 + (spring.x / length) * 0.2;
-  velocity.y = velocity.y * 0.9 + (spring.y / length) * 0.2;
+  velocity.x = velocity.x * 0.9 + (spring.x / length) * 1;
+  velocity.y = velocity.y * 0.9 + (spring.y / length) * 1;
 
   particle.x = particle.x + velocity.x;
   particle.y = particle.y + velocity.y;
