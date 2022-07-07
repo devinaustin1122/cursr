@@ -9,6 +9,7 @@ let velocity = pair(0, 0);
 let length = 10;
 
 // initialize
+// need to update this to insert all elements we need for the effects.
 function mouse() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
