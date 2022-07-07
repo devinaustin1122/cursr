@@ -9,7 +9,7 @@ let velocity = pair(0, 0);
 let length = 10;
 
 // initialize
-function init() {
+function mouse() {
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
 
@@ -17,7 +17,10 @@ function init() {
     cursor = pair(e.clientX, e.clientY);
   });
 
-  trail();
+  return {
+    trail,
+    elastic,
+  };
 }
 
 // animation recursive loop
@@ -81,5 +84,3 @@ function pair(x, y) {
     y,
   };
 }
-
-init();
