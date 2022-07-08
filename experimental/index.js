@@ -1,20 +1,24 @@
-let canvas = document.getElementById("canvas");
+let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
-let particle = {
-  image: preRender("./ellipse.svg"),
-  ...pair(0, 0),
-};
+let particles = [particle("./ellipse.svg")];
 let cursor = pair(0, 0);
-let velocity = pair(0, 0);
 let length = 10;
 
-// initialize
-// need to update this to insert all elements we need for the effects.
-function mouse() {
+// initialize everything
+function init() {
+  // this needs to be updated
+  canvas.style.position = "fixed";
+  canvas.style.top = "0px";
+  canvas.style.left = "0px";
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
+}
 
-  document.addEventListener("mousemove", async (e) => {
+// function prepares and returns all relevant effects
+function follow() {
+  init();
+  document.body.appendChild(canvas);
+  document.addEventListener("mousemove", (e) => {
     cursor = pair(e.clientX, e.clientY);
   });
 
@@ -24,20 +28,67 @@ function mouse() {
   };
 }
 
+// function prepares and returns all relevant effects
+function spawn() {
+  init();
+  document.body.appendChild(canvas);
+  document.addEventListener("mousemove", (e) => {
+    addParticle(pair(e.clientX, e.clientY), 100);
+  });
+
+  return {
+    float,
+  };
+}
+
+// add particle to particles list
+function addParticle(coordinates, limit) {
+  let particle;
+  if (particles.length > limit) {
+    particle = particles.pop();
+  } else {
+    particle = {
+      image: preRender("./ellipse.svg"),
+      opacity: 1,
+      ...coordinates,
+    };
+  }
+
+  particles.unshift({
+    ...particle,
+    opacity: 1,
+    ...coordinates,
+  });
+}
+
+// floating effect
+function float() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let i = 0; i < particles.length; i++) {
+    particles[i].y -= 1;
+    particles[i].opacity *= 0.9;
+    ctx.globalAlpha = particles[i].opacity;
+    ctx.drawImage(particles[i].image, particles[i].x, particles[i].y);
+  }
+  requestAnimationFrame(float);
+}
+
 // animation recursive loop
 // add update function parameter
 function elastic() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  let spring = subtract(cursor, particle);
+  let spring = subtract(cursor, particles[0]);
 
-  velocity.x = velocity.x * 0.9 + (spring.x / length) * 1;
-  velocity.y = velocity.y * 0.9 + (spring.y / length) * 1;
+  particles[0].velocity.x =
+    particles[0].velocity.x * 0.9 + (spring.x / length) * 1;
+  particles[0].velocity.y =
+    particles[0].velocity.y * 0.9 + (spring.y / length) * 1;
 
-  particle.x = particle.x + velocity.x;
-  particle.y = particle.y + velocity.y;
+  particles[0].x = particles[0].x + particles[0].velocity.x;
+  particles[0].y = particles[0].y + particles[0].velocity.y;
 
-  ctx.drawImage(particle.image, particle.x, particle.y);
+  ctx.drawImage(particles[0].image, particles[0].x, particles[0].y);
   requestAnimationFrame(elastic);
 }
 
@@ -46,26 +97,16 @@ function elastic() {
 function trail() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-  let velocity = subtract(cursor, particle);
+  let velocity = subtract(cursor, particles[0]);
 
   velocity.x = velocity.x * 0.1;
   velocity.y = velocity.y * 0.1;
 
-  particle.x = particle.x + velocity.x;
-  particle.y = particle.y + velocity.y;
+  particles[0].x = particles[0].x + velocity.x;
+  particles[0].y = particles[0].y + velocity.y;
 
-  ctx.drawImage(particle.image, particle.x, particle.y);
+  ctx.drawImage(particles[0].image, particles[0].x, particles[0].y);
   requestAnimationFrame(trail);
-}
-
-// prerenders the image. improves performance
-function preRender(src) {
-  let canvasOS = document.createElement("canvas");
-  let ctxOS = canvasOS.getContext("2d");
-  const image = new Image();
-  image.src = src;
-  image.onload = () => ctxOS.drawImage(image, 0, 0);
-  return canvasOS;
 }
 
 // subtracts two pairs
@@ -84,4 +125,25 @@ function pair(x, y) {
     x,
     y,
   };
+}
+
+// factory functino for particles
+function particle(src) {
+  return {
+    image: preRender(src),
+    opacity: 1,
+    velocity: pair(0, 0),
+    ...pair(0, 0),
+  };
+}
+
+// utility functions
+// prerenders the image. improves performance
+function preRender(src) {
+  let canvasOS = document.createElement("canvas");
+  let ctxOS = canvasOS.getContext("2d");
+  const image = new Image();
+  image.src = src;
+  image.onload = () => ctxOS.drawImage(image, 0, 0);
+  return canvasOS;
 }
