@@ -4,18 +4,67 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="./public/style.css" />
+    <script src="index.js"></script>
     <title>Document</title>
   </head>
   <body>
-    <script src="index.js"></script>
-
+    <section class="hero">
+      <div class="hero__content">
+        <h4></h4>
+        <h1>Mouse Effect</h1>
+        <p>
+          Javascript library for cusomizing your
+          <svg
+            class="hero__svg"
+            width="15"
+            height="23"
+            viewBox="0 0 15 23"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M8.98129 22.8408C8.89813 22.8408 8.81497 22.8408 8.64865 22.7612C8.48233 22.6817 8.31601 22.5225 8.14969 22.3633L5.07276 15.519L1.33056 18.8616C1.2474 19.0208 1.08108 19.1003 0.831601 19.1003C0.748441 19.1003 0.582121 19.1003 0.498961 19.0208C0.249481 18.9412 0 18.6228 0 18.3045V0.795848C0 0.477509 0.16632 0.15917 0.498961 0.0795851C0.582121 3.02406e-07 0.748441 0 0.831601 0C0.997921 0 1.2474 0.0795849 1.41372 0.238754L8.06653 6.20761L14.7193 12.1765C14.9688 12.4152 15.052 12.7336 14.9688 13.0519C14.8857 13.3702 14.553 13.5294 14.2204 13.609L8.98129 14.0865L12.2245 20.8512C12.3077 21.0104 12.3077 21.2491 12.2245 21.4879C12.1414 21.6471 11.9751 21.8858 11.8087 21.9654L9.39709 23C9.23077 22.8408 9.06445 22.8408 8.98129 22.8408Z"
+              fill="white"
+            />
+          </svg>
+        </p>
+      </div>
+    </section>
+    <section class="elastic" id="elastic">
+      <h2>Elastic Effect</h2>
+    </section>
+    <section class="float" id="float">
+      <h2>Float Effect</h2>
+    </section>
     <script>
       //   mouse({
-      //     effect: float({ image: "./public/images/mouse.svg", speed: 0.5 }),
+      //     wrapper: "elastic",
+      //     effect: elastic({ image: "./public/images/mouse.svg" }),
       //   });
-      mouse({
-        effect: elastic({ image: "./public/images/mouse.svg", speed: 0.5 }),
+      //   console.log(effects.elastic);
+
+      let first = effect();
+
+      first.init({
+        wrapper: "elastic",
+        effect: first.elastic({ image: "./public/images/mouse.svg" }),
       });
+
+      let second = effect();
+
+      second.init({
+        wrapper: "float",
+        effect: second.float({ image: "./public/images/mouse.svg" }),
+      });
+      //   effects.init({
+      //     wrapper: "float",
+      //     effect: effects.elastic({ image: "./public/images/mouse.svg" }),
+      //   });
+      //   mouse({
+      //     wrapper: "float",
+      //     effect: float({ image: "./public/images/mouse.svg" }),
+      //   });
     </script>
   </body>
 </html>

@@ -1,154 +1,172 @@
-let canvas = document.createElement("canvas");
-let ctx = canvas.getContext("2d");
-let particles = [];
-let cursor = pair(0, 0);
-let length = 20;
+function effect() {
+  let self = {};
+  let canvas = document.createElement("canvas");
+  let ctx = canvas.getContext("2d");
+  let particles = [];
+  let cursor = pair(0, 0);
+  let length = 20;
 
-// initialize document and canvas
-function mouse(configs) {
-  canvas.style.position = "fixed";
-  canvas.style.top = "0px";
-  canvas.style.left = "0px";
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  // ======================================================
+  // I need to find a way to make these variables not
+  // global. I belive the module pattern will be useful
+  // in this case.
+  // ======================================================
 
-  document.body.appendChild(canvas);
+  // initialize document and canvas
+  self.init = function init(configs) {
+    if (configs.wrapper) {
+      let bounds = document
+        .getElementById(configs.wrapper)
+        .getBoundingClientRect();
+      canvas.style.position = "absolute";
+      canvas.style.top = `${bounds.top}px`;
+      canvas.style.left = `${bounds.left}px`;
+      canvas.width = bounds.width;
+      canvas.height = bounds.height;
+    } else {
+      canvas.style.position = "fixed";
+      canvas.style.top = "0px";
+      canvas.style.left = "0px";
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
 
-  animationLoop(configs.effect);
-}
-
-// animation loop
-async function animationLoop(effect) {
-  effect();
-  draw();
-  requestAnimationFrame(() => animationLoop(effect));
-}
-
-// elastic effect
-function elastic(configs) {
-  init(configs.image, false);
-
-  return () => {
-    particles.forEach((particle) => {
-      let spring = subtract(cursor, particle);
-
-      particle.velocity.x =
-        particle.velocity.x * 0.9 + (spring.x / length) * 0.2;
-      particle.velocity.y =
-        particle.velocity.y * 0.9 + (spring.y / length) * 0.2;
-
-      particle.x = particle.x + particle.velocity.x;
-      particle.y = particle.y + particle.velocity.y;
-    });
+    document.body.appendChild(canvas);
+    animationLoop(configs.effect);
   };
-}
 
-// trail effect
-function trail(configs) {
-  init(configs.image, false);
+  // animation loop
+  function animationLoop(effect) {
+    effect();
+    draw();
+    requestAnimationFrame(() => animationLoop(effect));
+  }
 
-  return () => {
-    particles.forEach((particle) => {
-      let velocity = subtract(cursor, particle);
+  // elastic effect
+  self.elastic = function elastic(configs) {
+    init(configs.image, false);
 
-      velocity.x = velocity.x * configs.speed;
-      velocity.y = velocity.y * configs.speed;
-
-      particle.x = particle.x + velocity.x;
-      particle.y = particle.y + velocity.y;
-    });
+    return () => {
+      particles.forEach((particle) => {
+        let spring = subtract(cursor, particle);
+        particle.velocity.x =
+          particle.velocity.x * 0.9 + (spring.x / length) * 0.2;
+        particle.velocity.y =
+          particle.velocity.y * 0.9 + (spring.y / length) * 0.2;
+        particle.x = particle.x + particle.velocity.x;
+        particle.y = particle.y + particle.velocity.y;
+      });
+    };
   };
-}
 
-// float effect
-function float(configs) {
-  init(configs.image, true);
+  // trail effect
+  self.trail = function trail(configs) {
+    init(configs.image, false);
 
-  return () => {
-    particles.forEach((particle) => {
-      particle.y -= 1;
-      particle.count++;
-      if (particle.count > 100) {
-        particles.splice(particles.indexOf(particle));
-      }
-    });
+    return () => {
+      particles.forEach((particle) => {
+        let velocity = subtract(cursor, particle);
+        velocity.x = velocity.x * configs.speed;
+        velocity.y = velocity.y * configs.speed;
+        particle.x = particle.x + velocity.x;
+        particle.y = particle.y + velocity.y;
+      });
+    };
   };
-}
 
-// initialize particles and event listeners
-function init(img, spawn) {
-  if (spawn) {
-    document.addEventListener("mousemove", (e) => {
-      if (
-        particles.length == 0 ||
-        magnitude(
-          pair(particles[0].x, particles[0].y),
-          pair(e.clientX, e.clientY)
-        ) > 40
-      )
-        particles.unshift(particle(img, pair(e.clientX, e.clientY)));
-    });
-  } else {
-    particles.unshift(particle(img, cursor));
-    document.addEventListener("mousemove", (e) => {
-      cursor = pair(e.clientX, e.clientY);
+  // float effect
+  self.float = function float(configs) {
+    init(configs.image, true);
+
+    return () => {
+      particles.forEach((particle) => {
+        particle.y -= 1;
+        particle.count++;
+        if (particle.count > 100) {
+          particles.splice(particles.indexOf(particle));
+        }
+      });
+    };
+  };
+
+  // initialize particles and event listeners
+  function init(img, spawn) {
+    if (spawn) {
+      document.addEventListener("mousemove", (e) => {
+        if (
+          particles.length == 0 ||
+          magnitude(
+            pair(particles[0].x, particles[0].y),
+            pair(e.clientX, e.clientY)
+          ) > 40
+        )
+          particles.unshift(particle(img, pair(e.clientX, e.clientY)));
+      });
+    } else {
+      particles.unshift(particle(img, cursor));
+      document.addEventListener("mousemove", (e) => {
+        cursor = pair(e.clientX, e.clientY);
+      });
+    }
+  }
+
+  // subtracts two pairs
+  function subtract(first, second) {
+    return pair(first.x - second.x, first.y - second.y);
+  }
+
+  // returns the magnitude of a vector described by two points
+  function magnitude(start, end) {
+    let diff = subtract(end, start);
+    return Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
+  }
+
+  // draw function
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    particles.forEach((particle) => {
+      ctx.drawImage(
+        particle.image,
+        particle.x - parseInt(canvas.style.left, 10),
+        particle.y - parseInt(canvas.style.top, 10),
+        particle.image.width * particle.scale,
+        particle.image.height * particle.scale
+      );
+      console.log(parseInt(canvas.style.top, 10));
     });
   }
-}
 
-// subtracts two pairs
-function subtract(first, second) {
-  return pair(first.x - second.x, first.y - second.y);
-}
+  // prerenders the image. improves performance.
+  function render(src) {
+    let canvasOS = document.createElement("canvas");
+    canvasOS.width = 100;
+    canvasOS.height = 100;
+    let ctxOS = canvasOS.getContext("2d");
+    const image = new Image();
+    image.src = src;
+    image.onload = () => ctxOS.drawImage(image, 0, 0);
+    return canvasOS;
+  }
 
-// returns the magnitude of a vector described by two points
-function magnitude(start, end) {
-  let diff = subtract(end, start);
-  return Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
-}
+  // factory function for a pair
+  function pair(x, y) {
+    return {
+      x,
+      y,
+    };
+  }
 
-// draw function
-function draw() {
-  ctx.clearRect(0, 0, canvas.width, canvas.height);
-  particles.forEach((particle) => {
-    ctx.drawImage(
-      particle.image,
-      particle.x,
-      particle.y,
-      particle.image.width * particle.scale,
-      particle.image.height * particle.scale
-    );
-  });
-}
+  // factory function for particles
+  function particle(src, coordinates) {
+    return {
+      image: render(src),
+      opacity: 1,
+      velocity: pair(0, 0),
+      scale: 1,
+      count: 0,
+      ...coordinates,
+    };
+  }
 
-// prerenders the image. improves performance.
-function render(src) {
-  let canvasOS = document.createElement("canvas");
-  canvasOS.width = 100;
-  canvasOS.height = 100;
-  let ctxOS = canvasOS.getContext("2d");
-  const image = new Image();
-  image.src = src;
-  image.onload = () => ctxOS.drawImage(image, 0, 0);
-  return canvasOS;
-}
-
-// factory function for a pair object
-function pair(x, y) {
-  return {
-    x,
-    y,
-  };
-}
-
-// factory function for particles
-function particle(src, coordinates) {
-  return {
-    image: render(src),
-    opacity: 1,
-    velocity: pair(0, 0),
-    scale: 1,
-    count: 0,
-    ...coordinates,
-  };
+  return self;
 }
