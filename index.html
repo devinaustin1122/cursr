@@ -31,19 +31,16 @@
         </p>
       </div>
     </section>
-    <section class="elastic" id="elastic">
+    <section class="effect" id="elastic">
       <h2>Elastic Effect</h2>
     </section>
-    <section class="float" id="float">
+    <section class="effect" id="float">
       <h2>Float Effect</h2>
     </section>
+    <section class="effect" id="trail">
+      <h2>Trail Effect</h2>
+    </section>
     <script>
-      //   mouse({
-      //     wrapper: "elastic",
-      //     effect: elastic({ image: "./public/images/mouse.svg" }),
-      //   });
-      //   console.log(effects.elastic);
-
       let first = effect();
 
       first.init({
@@ -57,14 +54,13 @@
         wrapper: "float",
         effect: second.float({ image: "./public/images/mouse.svg" }),
       });
-      //   effects.init({
-      //     wrapper: "float",
-      //     effect: effects.elastic({ image: "./public/images/mouse.svg" }),
-      //   });
-      //   mouse({
-      //     wrapper: "float",
-      //     effect: float({ image: "./public/images/mouse.svg" }),
-      //   });
+
+      let third = effect();
+
+      third.init({
+        wrapper: "trail",
+        effect: third.trail({ image: "./public/images/mouse.svg", speed: 0.1 }),
+      });
     </script>
   </body>
 </html>

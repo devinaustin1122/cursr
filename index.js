@@ -132,7 +132,6 @@ function effect() {
         particle.image.width * particle.scale,
         particle.image.height * particle.scale
       );
-      console.log(parseInt(canvas.style.top, 10));
     });
   }
 
