@@ -57,11 +57,17 @@ function animationLoop(configs) {
 // follow effect (WIP)
 function follow(configs) {
   particles.forEach((particle) => {
-    let spring = subtract(cursor, particle);
-    particle.velocity.x = particle.velocity.x * 0.9 + (spring.x / 20) * 0;
-    particle.velocity.y = particle.velocity.y * 0.9 + (spring.x / 20) * 0;
-    particle.x = particle.x + particle.velocity.x;
-    particle.y = particle.y + particle.velocity.y;
+    let velocity = subtract(cursor, particle);
+
+    if (configs.spring) {
+      console.log(configs.length);
+      particle.velocity.x =
+        particle.velocity.x * 0.9 + (velocity.x / configs.length) * 0.1;
+      particle.velocity.y =
+        particle.velocity.y * 0.9 + (velocity.y / configs.length) * 0.1;
+      particle.x = particle.x + particle.velocity.x;
+      particle.y = particle.y + particle.velocity.y;
+    }
   });
 }
 
