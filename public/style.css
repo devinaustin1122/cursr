@@ -12,18 +12,22 @@ html,
 body {
   min-height: 100vh;
   background-color: #252525;
-  background-image: linear-gradient(black, #252525);
+  background-image: linear-gradient(black, #3d3d3d);
   color: white;
   font-family: "Outfit", sans-serif;
 }
 
 h1 {
   font-size: 3rem;
-  margin-bottom: 1rem;
+}
+
+h2 {
+  font-size: 1rem;
 }
 
 p {
   color: #00a3ff;
+  font-size: 0.6rem;
 }
 
 .hero {
@@ -37,5 +41,11 @@ p {
 }
 
 .effect {
-  padding: 3rem;
+  padding: 3rem 1rem;
+}
+
+@media screen and (min-width: 800px) {
+  html {
+    font-size: 30px;
+  }
 }

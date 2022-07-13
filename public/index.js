@@ -3,10 +3,12 @@
 let canvas = document.createElement("canvas");
 let ctx = canvas.getContext("2d");
 let particles = [];
-let cursor = {};
+let cursor = pair(0, 0);
+let length = 20;
 
 // initialize canvas
-function effect(configs) {
+function init(configs) {
+  // cant click buttons
   if (configs.wrapper) {
     let bounds = document
       .getElementById(configs.wrapper)
@@ -23,45 +25,51 @@ function effect(configs) {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
   }
+
   document.body.appendChild(canvas);
 
-  configureEvents(configs);
-  animationLoop(configs);
+  document.addEventListener("mousemove", (e) => {
+    cursor = pair(e.clientX, e.clientY);
+    console.log("hi");
+  });
 }
 
-// configure events
-function configureEvents(configs) {
-  document.body.addEventListener("mouseenter", (e) => {
-    if (particles.length == 0) {
-      particles.unshift(particle(configs.image, pair(e.clientX, e.clientY)));
-    }
-  });
-
-  document.body.addEventListener("mousemove", (e) => {
+// initialization function for follow effects
+function follow(configs) {
+  init(configs);
+  particles.unshift(particle(configs.image, cursor));
+  document.addEventListener("mousemove", (e) => {
     cursor = pair(e.clientX, e.clientY);
   });
+  animationLoop(configs.effect);
+}
 
-  document.body.addEventListener("mousemove", (e) => {
-    if (configs.spawn == true)
+// initialization function for follow effects
+function spawn(configs) {
+  init(configs);
+  document.addEventListener("mousemove", (e) => {
+    if (
+      particles.length == 0 ||
+      magnitude(
+        pair(particles[0].x, particles[0].y),
+        pair(e.clientX, e.clientY)
+      ) > 40
+    )
       particles.unshift(particle(configs.image, pair(e.clientX, e.clientY)));
   });
+  animationLoop(configs.effect);
 }
 
 // animation loop
-function animationLoop(configs) {
-  follow(configs.follow);
+function animationLoop(effect) {
+  translate(1);
   draw();
-  requestAnimationFrame(() => animationLoop(configs));
+  requestAnimationFrame(() => animationLoop(effect));
 }
 
-// follow effect (WIP)
-function follow(configs) {
+function translate(distance) {
   particles.forEach((particle) => {
-    let spring = subtract(cursor, particle);
-    particle.velocity.x = particle.velocity.x * 0.9 + (spring.x / 20) * 0;
-    particle.velocity.y = particle.velocity.y * 0.9 + (spring.x / 20) * 0;
-    particle.x = particle.x + particle.velocity.x;
-    particle.y = particle.y + particle.velocity.y;
+    particle.y -= distance;
   });
 }
 
@@ -104,6 +112,17 @@ function float(configs) {
       }
     });
   };
+}
+
+// subtracts two pairs
+function subtract(first, second) {
+  return pair(first.x - second.x, first.y - second.y);
+}
+
+// returns the magnitude of a vector described by two points
+function magnitude(start, end) {
+  let diff = subtract(end, start);
+  return Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
 }
 
 // draw function
@@ -150,15 +169,4 @@ function particle(src, coordinates) {
     count: 0,
     ...coordinates,
   };
-}
-
-// subtracts two pairs
-function subtract(first, second) {
-  return pair(first.x - second.x, first.y - second.y);
-}
-
-// returns the magnitude of a vector described by two points
-function magnitude(start, end) {
-  let diff = subtract(end, start);
-  return Math.sqrt(Math.pow(diff.x, 2) + Math.pow(diff.y, 2));
 }

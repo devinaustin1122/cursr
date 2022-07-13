@@ -2,8 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="./public/favicon.ico" />
     <link rel="stylesheet" href="./public/style.css" />
     <script src="index.js"></script>
     <title>Document</title>
@@ -37,29 +37,19 @@
     <section class="effect" id="float">
       <h2>Float Effect</h2>
     </section>
-    <section class="effect" id="trail">
-      <h2>Trail Effect</h2>
-    </section>
     <script>
-      let first = effect();
-
-      first.init({
-        wrapper: "elastic",
-        effect: first.elastic({ image: "./public/images/mouse.svg" }),
-      });
-
-      let second = effect();
-
-      second.init({
-        wrapper: "float",
-        effect: second.float({ image: "./public/images/mouse.svg" }),
-      });
-
-      let third = effect();
-
-      third.init({
-        wrapper: "trail",
-        effect: third.trail({ image: "./public/images/mouse.svg", speed: 0.1 }),
+      //   effect({
+      //     spawn: true,
+      //     image: "./public/images/mouse.svg",
+      //     effect: float({ image: "./public/images/mouse.svg" }),
+      //   });
+      effect({
+        image: "./public/images/mouse.svg",
+        follow: {
+          resistance: 0.01,
+          spring: 0.2,
+          length: 20,
+        },
       });
     </script>
   </body>
