@@ -1,18 +1,25 @@
-let tree = {};
+
+/*
+* On mouse move, duplicate all spawn children.
+*/
 
 // Loops
 
-function initElements(configs, elements) {
-  let i = 0;
-  for (let config in configs) {
-    elements = { ...elements, config: element("test.svg", pair(0, 0)) };
+function initElements(configs) {
+  let arr = [];
+  let el = element("test.svg", pair);
+  for (let config of configs) {
+    if (config.children) {
+      el.children = initElements(config.children);
+    }
+    arr.push(el);
   }
-  console.log(elements.config);
+  return arr;
 }
 
 // Effects
 
-function follow(element, following, configs) {
+function follow(element, following) {
   let difference = subtract(following.coordinates, element.coordinates);
 
   let spring = false;
@@ -45,12 +52,16 @@ function pair(x, y) {
   };
 }
 
-function element(src, coordinates) {
+function element(src, coordinates, update) {
   return {
     img: src, // prerender here
     velocity: pair(0, 0),
     coordinates: { ...coordinates },
-    children: [],
+    update,
+    draw: () => {
+      console.log("draw");
+    },
+    children: [],';'
   };
 }
 
