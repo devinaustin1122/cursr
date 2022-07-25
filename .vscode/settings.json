@@ -1,0 +1,4 @@
+{
+  "editor.autoClosingOvertype": "auto",
+  "javascript.suggest.includeAutomaticOptionalChainCompletions": true
+}
