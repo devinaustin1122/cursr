@@ -2,8 +2,10 @@
  * Consider using a testing framework like jest. It has a VSCode extension.
  */
 
-var cursor = pair(-100, -100);
-var elements = [];
+const global = {
+  cursor: pair(-100, -100),
+  elements: [],
+};
 
 // Initialization
 
@@ -22,7 +24,7 @@ async function init() {
   draw(canvas, el.img);
 
   document.addEventListener("mousemove", (e) => {
-    cursor = pair(e.clientX, e.clientY);
+    global.cursor = pair(e.clientX, e.clientY);
   });
 
   // how can I cleanly handle updating cursor on mouse move.
@@ -32,7 +34,7 @@ async function init() {
 // Animation
 
 function loop() {
-  console.log(cursor);
+  console.log(global.cursor);
   requestAnimationFrame(loop);
 }
 
