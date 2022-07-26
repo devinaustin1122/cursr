@@ -1,4 +1,4 @@
-import { follow, element, pair, initElements, addElement } from "./refactor.js";
+import { follow, element, pair, addElement } from "./refactor.js";
 
 let particles = [];
 let configs = {
@@ -8,7 +8,6 @@ let configs = {
   delay: 0.5,
 };
 
-let elements = initElements(configs);
 console.debug(JSON.stringify(elements, null, 4));
 
 let el = element("test.svg", pair(0, 0));

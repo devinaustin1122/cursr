@@ -1,8 +1,9 @@
 /*
- * On mouse move, duplicate all spawn children.
- *
  * Consider using a testing framework like jest. It has a VSCode extension.
  */
+
+var cursor = pair(-100, -100);
+var elements = [];
 
 // Initialization
 
@@ -16,16 +17,23 @@ async function init() {
   document.body.appendChild(canvas);
 
   // promises work in order to ensure image is properly loaded.
-  // could potentially wrap in try catch
+  // could potentially wrap in try catch.
   let el = await element("./public/images/mouse.svg", pair(0, 0));
   draw(canvas, el.img);
+
+  document.addEventListener("mousemove", (e) => {
+    cursor = pair(e.clientX, e.clientY);
+  });
+
+  // how can I cleanly handle updating cursor on mouse move.
+  loop();
 }
 
-function initElements(configs) {
-  let arr = [];
-  let el = element("test.svg", pair(0, 0));
-  arr.push(el);
-  return arr;
+// Animation
+
+function loop() {
+  console.log(cursor);
+  requestAnimationFrame(loop);
 }
 
 // Effects
@@ -93,7 +101,7 @@ async function element(src, coordinates, effect) {
   let img = await createCanvas(src);
 
   return {
-    img, // precreateCanvas here
+    img,
     velocity: pair(0, 0),
     coordinates: { ...coordinates },
     update: () => {
@@ -106,5 +114,5 @@ async function element(src, coordinates, effect) {
 
 function effect() {}
 
-export { initElements, follow, pair, element, addElement, createCanvas, init };
+export { follow, pair, element, addElement, createCanvas, init };
 export default effect;
