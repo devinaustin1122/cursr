@@ -4,7 +4,7 @@
  * Consider using a testing framework like jest. It has a VSCode extension.
  */
 
-// Loops
+// Initialization
 
 async function init() {
   let canvas = document.createElement("canvas");
@@ -15,11 +15,10 @@ async function init() {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  // promises work in order to ensure image is properly loaded
-  let rendered = createCanvas("./public/images/mouse.svg");
-  rendered.then((result) => {
-    draw(canvas, result);
-  });
+  // promises work in order to ensure image is properly loaded.
+  // could potentially wrap in try catch
+  let el = await element("./public/images/mouse.svg", pair(0, 0));
+  draw(canvas, el.img);
 }
 
 function initElements(configs) {
@@ -77,9 +76,6 @@ function createCanvas(src) {
       context.drawImage(image, 0, 0);
       resolve(canvas);
     };
-    image.onerror = () => {
-      reject("error");
-    };
     image.src = src;
   });
 }
@@ -93,9 +89,11 @@ function pair(x, y) {
   };
 }
 
-function element(src, coordinates, update) {
+async function element(src, coordinates, effect) {
+  let img = await createCanvas(src);
+
   return {
-    img: createCanvas(src), // precreateCanvas here
+    img, // precreateCanvas here
     velocity: pair(0, 0),
     coordinates: { ...coordinates },
     update: () => {

@@ -1,11 +1,4 @@
-import {
-  follow,
-  element,
-  pair,
-  initElements,
-  addElement,
-  render,
-} from "./refactor.js";
+import { follow, element, pair, initElements, addElement } from "./refactor.js";
 
 let particles = [];
 let configs = {
@@ -23,9 +16,6 @@ let arr = [];
 let tmp = addElement(arr, el);
 tmp = addElement(tmp, el);
 console.log(tmp);
-
-let img = render("test.svg");
-console.log(img);
 
 console.log("---------------");
 console.log("tests complete");
