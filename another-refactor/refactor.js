@@ -43,7 +43,7 @@ async function init() {
     follow(el, el.reference);
   };
   effects[el2.id] = (el) => {
-    follow(el, el.reference);
+    spring(el, el.reference);
   };
   effects[3] = (el) => {
     float(el);
@@ -70,22 +70,28 @@ function animate(canvas, elements, effects) {
 
 // Effects
 
-function follow(element, to) {
+function spring(element, to) {
   let difference = subtract(to, element.coordinates);
 
-  let spring = true;
-
-  if (spring) {
-    element.velocity.x = element.velocity.x * 0.9 + (difference.x / 2) * 0.1;
-    element.velocity.y = element.velocity.y * 0.9 + (difference.y / 2) * 0.1;
-  } else {
-    element.velocity.x = difference.x * 0.5;
-    element.velocity.y = difference.y * 0.5;
-  }
+  element.velocity.x = element.velocity.x * 0.9 + (difference.x / 2) * 0.1;
+  element.velocity.y = element.velocity.y * 0.9 + (difference.y / 2) * 0.1;
 
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
-  element.coordinates.y += 20;
+  element.coordinates.y += 15;
+
+  return element;
+}
+
+function follow(element, to) {
+  let difference = subtract(to, element.coordinates);
+
+  element.velocity.x = difference.x * 0.2;
+  element.velocity.y = difference.y * 0.2;
+
+  element.coordinates.x += element.velocity.x;
+  element.coordinates.y += element.velocity.y;
+  element.coordinates.y += 15;
 
   return element;
 }
