@@ -17,51 +17,52 @@ async function init() {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  let elements = {
-    permanent: [],
-    spawned: [],
-  };
-
+  // create a cursor object to track position
   let cursor = pair(0, 0);
-  document.addEventListener("mousemove", async (e) => {
+  document.addEventListener("mousemove", (e) => {
     cursor.x = e.clientX;
     cursor.y = e.clientY;
-    elements.spawned.push(
-      await element("./public/images/mouse.svg", pair(0, 0), cursor)
-    );
   });
 
-  let el1 = await element("./public/images/mouse.svg", pair(0, 0), cursor);
-  let el2 = await element(
-    "./public/images/mouse.svg",
-    pair(0, 0),
-    el1.coordinates
-  );
-  let el3 = await element(
-    "./public/images/mouse.svg",
-    pair(0, 0),
-    el2.coordinates
-  );
+  // initialize elements
+  // maybe each element can hold configs, that way for effects
+  // we can just check if certain properties are available
+  let el1 = await element(0, "./mouse.svg", pair(0, 0), cursor);
+  let el2 = await element(1, "./mouse.svg", pair(0, 0), el1.coordinates);
+  let elements = [el1, el2];
 
-  elements.permanent.push(el1);
-  elements.permanent.push(el2);
-  elements.permanent.push(el3);
-  loop(canvas, elements);
+  addEventListener("mousemove", async () => {
+    elements.push(await element(3, "./mouse.svg", { ...cursor }, null));
+  });
+
+  // iniatlaize effects. maybe pass configs
+  let effects = [];
+  effects[el1.id] = (el) => {
+    follow(el, el.reference);
+  };
+  effects[el2.id] = (el) => {
+    follow(el, el.reference);
+  };
+  effects[3] = (el) => {
+    float(el);
+  };
+
+  animate(canvas, elements, effects);
 }
 
 // Animation
 
-function loop(canvas, elements) {
+function animate(canvas, elements, effects) {
   clearCanvas(canvas);
 
-  let element = elements.permanent[0];
-  elements.permanent[0] = follow(element, element.reference);
-  drawElement(canvas, element);
-
-  console.log(elements.spawned);
+  for (let i = 0; i < elements.length; i++) {
+    let element = elements[i];
+    effects[element.id](element);
+    drawElement(canvas, element);
+  }
 
   requestAnimationFrame(() => {
-    loop(canvas, elements);
+    animate(canvas, elements, effects);
   });
 }
 
@@ -83,6 +84,12 @@ function follow(element, to) {
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
   element.coordinates.y += 20;
+
+  return element;
+}
+
+function float(element) {
+  element.coordinates.y += 5;
 
   return element;
 }
@@ -132,10 +139,13 @@ function pair(x, y) {
   };
 }
 
-async function element(src, coordinates, reference, effect) {
+// I think I'll be able to remove reference. this will already
+// be determined in the effects map
+async function element(id, src, coordinates, reference, effect) {
   let img = await createCanvas(src);
 
   return {
+    id,
     img,
     velocity: pair(0, 0),
     coordinates: { ...coordinates },

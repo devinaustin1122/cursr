@@ -1,4 +1,5 @@
 {
   "editor.autoClosingOvertype": "auto",
-  "javascript.suggest.includeAutomaticOptionalChainCompletions": true
+  "javascript.suggest.includeAutomaticOptionalChainCompletions": true,
+  "html.format.wrapLineLength": 200
 }
