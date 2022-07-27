@@ -17,11 +17,18 @@ async function init() {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  let elements = [];
+  let elements = {
+    permanent: [],
+    spawned: [],
+  };
+
   let cursor = pair(0, 0);
-  document.addEventListener("mousemove", (e) => {
+  document.addEventListener("mousemove", async (e) => {
     cursor.x = e.clientX;
     cursor.y = e.clientY;
+    elements.spawned.push(
+      await element("./public/images/mouse.svg", pair(0, 0), cursor)
+    );
   });
 
   let el1 = await element("./public/images/mouse.svg", pair(0, 0), cursor);
@@ -36,10 +43,9 @@ async function init() {
     el2.coordinates
   );
 
-  elements.push(el1);
-  elements.push(el2);
-  elements.push(el3);
-
+  elements.permanent.push(el1);
+  elements.permanent.push(el2);
+  elements.permanent.push(el3);
   loop(canvas, elements);
 }
 
@@ -48,10 +54,11 @@ async function init() {
 function loop(canvas, elements) {
   clearCanvas(canvas);
 
-  for (let i = 0; i < elements.length; i++) {
-    elements[i] = follow(elements[i], elements[i].reference);
-    drawElement(canvas, elements[i]);
-  }
+  let element = elements.permanent[0];
+  elements.permanent[0] = follow(element, element.reference);
+  drawElement(canvas, element);
+
+  console.log(elements.spawned);
 
   requestAnimationFrame(() => {
     loop(canvas, elements);
@@ -75,7 +82,7 @@ function follow(element, to) {
 
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
-  element.coordinates.y += 50;
+  element.coordinates.y += 20;
 
   return element;
 }
@@ -133,9 +140,6 @@ async function element(src, coordinates, reference, effect) {
     velocity: pair(0, 0),
     coordinates: { ...coordinates },
     reference,
-    update: () => {
-      console.log("update");
-    },
   };
 }
 
