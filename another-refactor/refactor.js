@@ -2,6 +2,8 @@
  * Consider using a testing framework like jest. It has a VSCode extension.
  */
 
+// use a map to link elements to effects?
+
 const global = {
   cursor: pair(-100, -100),
   elements: [],
@@ -18,23 +20,23 @@ async function init() {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
-  // promises work in order to ensure image is properly loaded.
-  // could potentially wrap in try catch.
-  let el = await element("./public/images/mouse.svg", pair(0, 0));
-  draw(canvas, el.img);
-
   document.addEventListener("mousemove", (e) => {
     global.cursor = pair(e.clientX, e.clientY);
   });
 
+  let el = await element("./public/images/mouse.svg");
+  global.elements.unshift(el);
+  draw(canvas, el.img);
+
   // how can I cleanly handle updating cursor on mouse move.
-  loop();
+  // loop();
 }
 
 // Animation
 
 function loop() {
   console.log(global.cursor);
+
   requestAnimationFrame(loop);
 }
 
