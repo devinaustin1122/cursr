@@ -27,12 +27,14 @@ async function init() {
   // initialize elements
   // maybe each element can hold configs, that way for effects
   // we can just check if certain properties are available
-  let el1 = await element(0, "./mouse.svg", pair(0, 0), cursor);
+
+  // maybe change to when mouse
+  let el1 = await element(0, "./cursor.svg", pair(0, 0), cursor);
   let el2 = await element(1, "./mouse.svg", pair(0, 0), el1.coordinates);
   let elements = [el1, el2];
 
   addEventListener("mousemove", async () => {
-    elements.push(await element(3, "./mouse.svg", { ...cursor }, null));
+    // elements.push(await element(3, "./mouse.svg", { ...cursor }, null));
   });
 
   // iniatlaize effects. maybe pass configs
