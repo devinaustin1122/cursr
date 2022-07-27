@@ -3,6 +3,8 @@
  */
 
 // use a map to link elements to effects?
+// i'm avoiding OOP programming. this is where most of the difficulty
+// is coming from. but what am I really gaining from this approach?
 
 const global = {
   cursor: pair(-100, -100),
