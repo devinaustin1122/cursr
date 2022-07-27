@@ -6,11 +6,6 @@
 // i'm avoiding OOP programming. this is where most of the difficulty
 // is coming from. but what am I really gaining from this approach?
 
-const global = {
-  cursor: pair(-100, -100),
-  elements: [],
-};
-
 // Initialization
 
 async function init() {
@@ -22,32 +17,53 @@ async function init() {
   canvas.height = window.innerHeight;
   document.body.appendChild(canvas);
 
+  let elements = [];
+  let cursor = pair(0, 0);
   document.addEventListener("mousemove", (e) => {
-    global.cursor = pair(e.clientX, e.clientY);
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
   });
 
-  let el = await element("./public/images/mouse.svg");
-  global.elements.unshift(el);
-  draw(canvas, el.img);
+  let el1 = await element("./public/images/mouse.svg", pair(0, 0), cursor);
+  let el2 = await element(
+    "./public/images/mouse.svg",
+    pair(0, 0),
+    el1.coordinates
+  );
+  let el3 = await element(
+    "./public/images/mouse.svg",
+    pair(0, 0),
+    el2.coordinates
+  );
 
-  // how can I cleanly handle updating cursor on mouse move.
-  // loop();
+  elements.push(el1);
+  elements.push(el2);
+  elements.push(el3);
+
+  loop(canvas, elements);
 }
 
 // Animation
 
-function loop() {
-  console.log(global.cursor);
+function loop(canvas, elements) {
+  clearCanvas(canvas);
 
-  requestAnimationFrame(loop);
+  for (let i = 0; i < elements.length; i++) {
+    elements[i] = follow(elements[i], elements[i].reference);
+    drawElement(canvas, elements[i]);
+  }
+
+  requestAnimationFrame(() => {
+    loop(canvas, elements);
+  });
 }
 
 // Effects
 
-function follow(element, following) {
-  let difference = subtract(following.coordinates, element.coordinates);
+function follow(element, to) {
+  let difference = subtract(to, element.coordinates);
 
-  let spring = false;
+  let spring = true;
 
   if (spring) {
     element.velocity.x = element.velocity.x * 0.9 + (difference.x / 2) * 0.1;
@@ -59,6 +75,8 @@ function follow(element, following) {
 
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
+  element.coordinates.y += 50;
+
   return element;
 }
 
@@ -72,9 +90,14 @@ function addElement(list, element) {
   return [...list, element];
 }
 
-function draw(canvas, img) {
+function drawElement(canvas, element) {
   let context = canvas.getContext("2d");
-  context.drawImage(img, 0, 0);
+  context.drawImage(element.img, element.coordinates.x, element.coordinates.y);
+}
+
+function clearCanvas(canvas) {
+  const ctx = canvas.getContext("2d");
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
 function createCanvas(src) {
@@ -82,7 +105,6 @@ function createCanvas(src) {
     let canvas = document.createElement("canvas");
     canvas.width = 100;
     canvas.height = 100;
-
     let context = canvas.getContext("2d");
 
     const image = new Image();
@@ -103,13 +125,14 @@ function pair(x, y) {
   };
 }
 
-async function element(src, coordinates, effect) {
+async function element(src, coordinates, reference, effect) {
   let img = await createCanvas(src);
 
   return {
     img,
     velocity: pair(0, 0),
     coordinates: { ...coordinates },
+    reference,
     update: () => {
       console.log("update");
     },
