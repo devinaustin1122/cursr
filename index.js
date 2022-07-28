@@ -14,28 +14,39 @@
 // Initialization
 
 async function cursr(configs) {
+  // initialize DOM related objects
   let canvas = createCanvas();
   let cursor = initCursor("./circle.svg");
   document.body.appendChild(canvas);
 
-  // initialize elements on mouseenter
-  let el1 = await element(0, "./cursor.svg", pair(0, 0), cursor);
-  let el2 = await element(1, "./mouse.svg", pair(0, 0), el1.coordinates);
-  let elements = [el1, el2];
-
-  addEventListener("mousemove", async () => {
-    elements.push(
-      await element(3, "./mouse.svg", { ...el2.coordinates }, null)
-    );
+  let visible = configs.filter((config) => {
+    return config.visible;
   });
 
-  // pass configs to animation loop
-  let effects = [];
-  effects[el1.id] = follow;
-  effects[el2.id] = spring;
-  effects[3] = float;
+  let hidden = configs.filter((config) => {
+    return !config.visible;
+  });
 
-  animate(canvas, elements, effects);
+  let elements = 
+  // create a list of spawns
+
+  //   // initialize elements on mouseenter
+  //   let el1 = await element(0, "./cursor.svg", pair(0, 0), cursor);
+  //   let el2 = await element(1, "./mouse.svg", pair(0, 0), el1.coordinates);
+
+  //   let elements = [el1, el2, el3];
+
+  //   addEventListener("mousemove", async () => {
+  //     elements.push(el3);
+  //   });
+
+  //   // pass configs to animation loop
+  //   let effects = [];
+  //   effects[el1.id] = follow;
+  //   effects[el2.id] = spring;
+  //   effects[el3.id] = float;
+
+  //   animate(canvas, elements, effects);
 }
 
 // Animation

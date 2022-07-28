@@ -14,11 +14,14 @@
       {
         id: "first",
         src: "./cursor.svg",
-        followCursor: true,
+        reference: "cursor",
+        spring: true,
       },
       {
         id: "second",
         src: "./mouse.svg",
+        reference: "first",
+        visible: false,
       },
     ];
 
