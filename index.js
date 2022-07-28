@@ -8,18 +8,15 @@
 // might also want to keep it as canvas for more control.
 
 // ideas include ripple effect
-// distort effect
-//
+// fading trail effect
+// shrinking effect
 
 // Initialization
 
-async function init() {
+async function cursr(configs) {
   let canvas = createCanvas();
   let cursor = initCursor("./circle.svg");
   document.body.appendChild(canvas);
-
-  // initialize elements
-  // maybe each element can hold configs, that way for effects
 
   // initialize elements on mouseenter
   let el1 = await element(0, "./cursor.svg", pair(0, 0), cursor);
@@ -47,8 +44,11 @@ function animate(canvas, elements, effects) {
   clearCanvas(canvas);
 
   for (let i = 0; i < elements.length; i++) {
+    //updateElements
     effects[elements[i].id](elements[i], element.reference);
+    //update to drawElements
     drawElement(canvas, elements[i]);
+    //paintElements
   }
 
   requestAnimationFrame(() => {
@@ -167,5 +167,5 @@ async function element(id, src, coordinates, reference, effect) {
 
 function effect() {}
 
-export { follow, pair, element, addElement, renderCanvas, init };
-export default effect;
+export { follow, pair, element, addElement, renderCanvas };
+export default cursr;

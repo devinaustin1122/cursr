@@ -6,9 +6,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Refactor</title>
   </head>
-  <body></body>
+  <body>
+    <div style="width: 100vw; height: 50vh; background-color: gray"></div>
+  </body>
   <script type="module">
-    import { init } from "./index.js";
-    init();
+    let configs = [
+      {
+        id: "first",
+        src: "./cursor.svg",
+        followCursor: true,
+      },
+      {
+        id: "second",
+        src: "./mouse.svg",
+      },
+    ];
+
+    import cursr from "./index.js";
+    cursr(configs);
   </script>
 </html>
