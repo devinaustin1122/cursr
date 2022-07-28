@@ -2,52 +2,41 @@
  * Consider using a testing framework like jest. It has a VSCode extension.
  */
 
-// use a map to link elements to effects?
-// i'm avoiding OOP programming. this is where most of the difficulty
-// is coming from. but what am I really gaining from this approach?
+// might want to update this to not use canvas. that way I can just save ID's and state is
+// saved on the html side.
+
+// might also want to keep it as canvas for more control.
+
+// ideas include ripple effect
+// distort effect
+//
 
 // Initialization
 
 async function init() {
-  let canvas = document.createElement("canvas");
-  canvas.style.position = "fixed";
-  canvas.style.top = "0px";
-  canvas.style.left = "0px";
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  let canvas = createCanvas();
+  let cursor = initCursor("./circle.svg");
   document.body.appendChild(canvas);
-
-  // create a cursor object to track position
-  let cursor = pair(0, 0);
-  document.addEventListener("mousemove", (e) => {
-    cursor.x = e.clientX;
-    cursor.y = e.clientY;
-  });
 
   // initialize elements
   // maybe each element can hold configs, that way for effects
-  // we can just check if certain properties are available
 
-  // maybe change to when mouse
+  // initialize elements on mouseenter
   let el1 = await element(0, "./cursor.svg", pair(0, 0), cursor);
   let el2 = await element(1, "./mouse.svg", pair(0, 0), el1.coordinates);
   let elements = [el1, el2];
 
   addEventListener("mousemove", async () => {
-    // elements.push(await element(3, "./mouse.svg", { ...cursor }, null));
+    elements.push(
+      await element(3, "./mouse.svg", { ...el2.coordinates }, null)
+    );
   });
 
-  // iniatlaize effects. maybe pass configs
+  // pass configs to animation loop
   let effects = [];
-  effects[el1.id] = (el) => {
-    follow(el, el.reference);
-  };
-  effects[el2.id] = (el) => {
-    spring(el, el.reference);
-  };
-  effects[3] = (el) => {
-    float(el);
-  };
+  effects[el1.id] = follow;
+  effects[el2.id] = spring;
+  effects[3] = float;
 
   animate(canvas, elements, effects);
 }
@@ -58,9 +47,8 @@ function animate(canvas, elements, effects) {
   clearCanvas(canvas);
 
   for (let i = 0; i < elements.length; i++) {
-    let element = elements[i];
-    effects[element.id](element);
-    drawElement(canvas, element);
+    effects[elements[i].id](elements[i], element.reference);
+    drawElement(canvas, elements[i]);
   }
 
   requestAnimationFrame(() => {
@@ -70,8 +58,9 @@ function animate(canvas, elements, effects) {
 
 // Effects
 
-function spring(element, to) {
-  let difference = subtract(to, element.coordinates);
+// how can I break these up? return a vector rather than an element
+function spring(element) {
+  let difference = subtract(element.reference, element.coordinates);
 
   element.velocity.x = element.velocity.x * 0.9 + (difference.x / 2) * 0.1;
   element.velocity.y = element.velocity.y * 0.9 + (difference.y / 2) * 0.1;
@@ -79,27 +68,20 @@ function spring(element, to) {
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
   element.coordinates.y += 15;
-
-  return element;
 }
 
-function follow(element, to) {
-  let difference = subtract(to, element.coordinates);
+function follow(element) {
+  let difference = subtract(element.reference, element.coordinates);
 
   element.velocity.x = difference.x * 0.2;
   element.velocity.y = difference.y * 0.2;
 
   element.coordinates.x += element.velocity.x;
   element.coordinates.y += element.velocity.y;
-  element.coordinates.y += 15;
-
-  return element;
 }
 
 function float(element) {
   element.coordinates.y += 5;
-
-  return element;
 }
 
 // Utility
@@ -117,12 +99,22 @@ function drawElement(canvas, element) {
   context.drawImage(element.img, element.coordinates.x, element.coordinates.y);
 }
 
+function createCanvas() {
+  let canvas = document.createElement("canvas");
+  canvas.style.position = "fixed";
+  canvas.style.top = "0px";
+  canvas.style.left = "0px";
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  return canvas;
+}
+
 function clearCanvas(canvas) {
   const ctx = canvas.getContext("2d");
   ctx.clearRect(0, 0, canvas.width, canvas.height);
 }
 
-function createCanvas(src) {
+function renderCanvas(src) {
   return new Promise((resolve, reject) => {
     let canvas = document.createElement("canvas");
     canvas.width = 100;
@@ -138,6 +130,16 @@ function createCanvas(src) {
   });
 }
 
+function initCursor(src) {
+  document.body.style.cursor = `url(${src}), auto`;
+  let cursor = pair(0, 0);
+  document.addEventListener("mousemove", (e) => {
+    cursor.x = e.clientX;
+    cursor.y = e.clientY;
+  });
+  return cursor;
+}
+
 // Factories
 
 function pair(x, y) {
@@ -150,7 +152,7 @@ function pair(x, y) {
 // I think I'll be able to remove reference. this will already
 // be determined in the effects map
 async function element(id, src, coordinates, reference, effect) {
-  let img = await createCanvas(src);
+  let img = await renderCanvas(src);
 
   return {
     id,
@@ -165,5 +167,5 @@ async function element(id, src, coordinates, reference, effect) {
 
 function effect() {}
 
-export { follow, pair, element, addElement, createCanvas, init };
+export { follow, pair, element, addElement, renderCanvas, init };
 export default effect;
