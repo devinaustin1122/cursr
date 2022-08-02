@@ -1,5 +1,5 @@
 (function () {
-  // Display object
+  // Display factory
 
   function createDisplay() {
     let cursor = { x: 0, y: 0 };
@@ -41,7 +41,7 @@
     };
   }
 
-  // Element object
+  // Element factory
 
   async function createElement(src, position, update) {
     return {
@@ -57,7 +57,7 @@
   async function cursr() {
     let display = createDisplay();
 
-    let element = await createElement("mouse.svg", { x: 0, y: 0 }, () => {
+    let element = await createElement("mouse.svg", display.cursor, () => {
       element.position.x = display.cursor.x;
       element.position.y = display.cursor.y;
     });
@@ -65,13 +65,9 @@
     display.addElement(element);
 
     document.addEventListener("mousemove", async (e) => {
-      let spawn = await createElement(
-        "mouse.svg",
-        { x: e.clientX, y: e.clientY },
-        () => {
-          float(spawn);
-        }
-      );
+      let spawn = await createElement("mouse.svg", element.position, () => {
+        spawn.position.y--;
+      });
       display.addElement(spawn);
     });
 
@@ -82,10 +78,6 @@
     }
 
     loop();
-  }
-
-  function float(element) {
-    element.position.y--;
   }
 
   // Utility functions
