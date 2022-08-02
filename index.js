@@ -1,4 +1,4 @@
-(function () {
+let cursr = (function () {
   // Display factory
 
   function createDisplay() {
@@ -52,34 +52,6 @@
     };
   }
 
-  // Engine
-
-  async function cursr() {
-    let display = createDisplay();
-
-    let element = await createElement("mouse.svg", display.cursor, () => {
-      element.position.x = display.cursor.x;
-      element.position.y = display.cursor.y;
-    });
-
-    display.addElement(element);
-
-    document.addEventListener("mousemove", async (e) => {
-      let spawn = await createElement("mouse.svg", element.position, () => {
-        spawn.position.y--;
-      });
-      display.addElement(spawn);
-    });
-
-    function loop() {
-      display.updateElements();
-      display.drawElements();
-      requestAnimationFrame(loop);
-    }
-
-    loop();
-  }
-
   // Utility functions
 
   function createCanvas() {
@@ -93,12 +65,11 @@
   }
 
   function preRender(src) {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       let canvas = document.createElement("canvas");
       canvas.width = 100;
       canvas.height = 100;
       let context = canvas.getContext("2d");
-
       const image = new Image();
       image.onload = () => {
         context.drawImage(image, 0, 0);
@@ -108,5 +79,47 @@
     });
   }
 
-  cursr();
+  // Main
+
+  function cursr(conifgs) {
+    let display = createDisplay();
+
+    async function follow(reference, configs) {
+      let element = await createElement(
+        "mouse.svg",
+        display.cursor,
+        function update() {
+          element.position.x = display.cursor.x;
+          element.position.y = display.cursor.y;
+        }
+      );
+      display.addElement(element);
+    }
+
+    async function spawn(reference, configs) {
+      document.addEventListener("mousemove", async (e) => {
+        let spawn = await createElement(
+          "mouse.svg",
+          { x: e.clientX, y: e.clientY },
+          function update() {
+            spawn.position.y--;
+          }
+        );
+        display.addElement(spawn);
+      });
+    }
+
+    function start() {
+      function loop() {
+        display.updateElements();
+        display.drawElements();
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    return { follow, spawn, start };
+  }
+
+  return cursr;
 })();
