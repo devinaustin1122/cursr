@@ -1,9 +1,48 @@
 let cursr = (function () {
+  // Utility functions
+
+  function cursorSet(src) {
+    document.body.style.cursor = `url(${src}), pointer`;
+  }
+
+  function canvasCreate() {
+    let canvas = document.createElement("canvas");
+    canvas.style.position = "fixed";
+    canvas.style.top = "0px";
+    canvas.style.left = "0px";
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    return canvas;
+  }
+
+  function preRender(src) {
+    return new Promise((resolve) => {
+      let canvas = document.createElement("canvas");
+      canvas.width = 100;
+      canvas.height = 100;
+      let context = canvas.getContext("2d");
+      const image = new Image();
+      image.onload = () => {
+        context.drawImage(image, 0, 0);
+        resolve(canvas);
+      };
+      image.src = src;
+    });
+  }
+
+  function vecSubtract(vector, minus) {
+    return {
+      x: vector.x - minus.x,
+      y: vector.y - minus.y,
+    };
+  }
+
   // Display factory
 
   function createDisplay() {
     let cursor = { x: 0, y: 0 };
-    let canvas = createCanvas();
+    let canvas = canvasCreate();
+    let context = canvas.getContext("2d");
     let elements = [];
 
     document.addEventListener("mousemove", (e) => {
@@ -28,14 +67,9 @@ let cursr = (function () {
       },
 
       drawElements: function drawElements() {
-        let context = canvas.getContext("2d");
         context.clearRect(0, 0, canvas.width, canvas.height);
         elements.forEach((element) => {
-          context.drawImage(
-            element.image,
-            element.position.x,
-            element.position.y
-          );
+          element.draw(context);
         });
       },
     };
@@ -43,47 +77,83 @@ let cursr = (function () {
 
   // Element factory
 
-  async function createElement(src, position, update) {
+  async function createElement(src, x, y, update) {
     return {
-      velocity: { x: 0, y: 0 },
-      position: { ...position },
       image: await preRender(src),
+      x,
+      y,
+      velocity: { x: 0, y: 0 },
       update,
+      draw: function draw(context) {
+        context.drawImage(this.image, this.x, this.y);
+      },
     };
   }
 
   // Effect functions
 
   function trail(element, cursor) {
-    element.position.x = cursor.x;
-    element.position.y = cursor.y;
+    let difference = vecSubtract(cursor, element);
+    // element.x += difference.x * 0.1;
+    // element.y += difference.y * 0.1;
+    element.velocity.x += difference.x * 0.1;
+    element.velocity.y += difference.y * 0.1;
+    element.velocity.x *= 0.9;
+    element.velocity.y *= 0.9;
+
+    element.x += element.velocity.x;
+    element.y += element.velocity.y;
   }
 
   function float(element) {
-    element.position.y--;
+    element.y--;
   }
 
   // Main
 
   function cursr(conifgs) {
     let display = createDisplay();
-    setCursor(conifgs.img);
+    cursorSet(conifgs.img);
 
-    async function follow(reference, configs) {
-      let position = reference ? reference.position : display.cursor;
-      let element = await createElement(configs.img, position, () => {
-        trail(element, display.cursor);
-      });
+    async function follow(configs, reference = display.cursor) {
+      let element = await createElement(
+        configs.img,
+        reference.x,
+        reference.y,
+        () => {
+          trail(element, display.cursor);
+        }
+      );
       display.addElement(element);
+      return element;
     }
 
-    async function spawn(reference, configs) {
-      let position = reference ? reference.position : display.cursor;
+    async function spring(configs, reference = display.cursor) {
+      let element = await createElement(
+        configs.img,
+        reference.x,
+        reference.y,
+        () => {
+          trail(element, display.cursor);
+        }
+      );
+      display.addElement(element);
+      return element;
+    }
+
+    async function spawn(configs, reference = display.cursor) {
       document.addEventListener("mousemove", async (e) => {
-        let spawn = await createElement(configs.img, position, () => {
-          float(spawn);
-        });
-        display.addElement(spawn);
+        let element = await createElement(
+          configs.img,
+          reference.x,
+          reference.y,
+          () => {
+            float(spawn);
+          }
+        );
+        display.addElement(element);
+        console.log(element);
+        return element;
       });
     }
 
@@ -96,38 +166,7 @@ let cursr = (function () {
       loop();
     }
 
-    return { follow, spawn, start };
-  }
-
-  // Utility functions
-
-  function setCursor(src) {
-    document.body.style.cursor = `url(${src}), pointer`;
-  }
-
-  function createCanvas() {
-    let canvas = document.createElement("canvas");
-    canvas.style.position = "fixed";
-    canvas.style.top = "0px";
-    canvas.style.left = "0px";
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    return canvas;
-  }
-
-  function preRender(src) {
-    return new Promise((resolve) => {
-      let canvas = document.createElement("canvas");
-      canvas.width = 100;
-      canvas.height = 100;
-      let context = canvas.getContext("2d");
-      const image = new Image();
-      image.onload = () => {
-        context.drawImage(image, 0, 0);
-        resolve(canvas);
-      };
-      image.src = src;
-    });
+    return { follow, spring, spawn, start };
   }
 
   return cursr;

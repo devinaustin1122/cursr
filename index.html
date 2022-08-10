@@ -10,7 +10,10 @@
   <body>
     <script>
       let cursor = cursr({ img: "mouse.svg" });
-      cursor.follow(null, { img: "mouse.svg" });
+
+      cursor.spring({ img: "mouse.svg" }).then((res) => {
+        cursor.spawn({ img: "mouse.svg" }, res);
+      });
       cursor.start();
     </script>
   </body>
