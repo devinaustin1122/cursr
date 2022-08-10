@@ -9,8 +9,8 @@
   </head>
   <body>
     <script>
-      let cursor = cursr();
-      let trailing = cursor.follow();
+      let cursor = cursr({ img: "mouse.svg" });
+      cursor.follow(null, { img: "mouse.svg" });
       cursor.start();
     </script>
   </body>

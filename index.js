@@ -52,7 +52,58 @@ let cursr = (function () {
     };
   }
 
+  // Effect functions
+
+  function trail(element, cursor) {
+    element.position.x = cursor.x;
+    element.position.y = cursor.y;
+  }
+
+  function float(element) {
+    element.position.y--;
+  }
+
+  // Main
+
+  function cursr(conifgs) {
+    let display = createDisplay();
+    setCursor(conifgs.img);
+
+    async function follow(reference, configs) {
+      let position = reference ? reference.position : display.cursor;
+      let element = await createElement(configs.img, position, () => {
+        trail(element, display.cursor);
+      });
+      display.addElement(element);
+    }
+
+    async function spawn(reference, configs) {
+      let position = reference ? reference.position : display.cursor;
+      document.addEventListener("mousemove", async (e) => {
+        let spawn = await createElement(configs.img, position, () => {
+          float(spawn);
+        });
+        display.addElement(spawn);
+      });
+    }
+
+    function start() {
+      function loop() {
+        display.updateElements();
+        display.drawElements();
+        requestAnimationFrame(loop);
+      }
+      loop();
+    }
+
+    return { follow, spawn, start };
+  }
+
   // Utility functions
+
+  function setCursor(src) {
+    document.body.style.cursor = `url(${src}), pointer`;
+  }
 
   function createCanvas() {
     let canvas = document.createElement("canvas");
@@ -77,48 +128,6 @@ let cursr = (function () {
       };
       image.src = src;
     });
-  }
-
-  // Main
-
-  function cursr(conifgs) {
-    let display = createDisplay();
-
-    async function follow(reference, configs) {
-      let element = await createElement(
-        "mouse.svg",
-        display.cursor,
-        function update() {
-          element.position.x = display.cursor.x;
-          element.position.y = display.cursor.y;
-        }
-      );
-      display.addElement(element);
-    }
-
-    async function spawn(reference, configs) {
-      document.addEventListener("mousemove", async (e) => {
-        let spawn = await createElement(
-          "mouse.svg",
-          { x: e.clientX, y: e.clientY },
-          function update() {
-            spawn.position.y--;
-          }
-        );
-        display.addElement(spawn);
-      });
-    }
-
-    function start() {
-      function loop() {
-        display.updateElements();
-        display.drawElements();
-        requestAnimationFrame(loop);
-      }
-      loop();
-    }
-
-    return { follow, spawn, start };
   }
 
   return cursr;
