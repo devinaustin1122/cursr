@@ -16,18 +16,18 @@ let cursr = (function () {
   }
 
   function preRender(src) {
-    return new Promise((resolve) => {
-      let canvas = document.createElement("canvas");
-      canvas.width = 100;
-      canvas.height = 100;
-      let context = canvas.getContext("2d");
-      const image = new Image();
-      image.onload = () => {
-        context.drawImage(image, 0, 0);
-        resolve(canvas);
-      };
-      image.src = src;
-    });
+    let canvas = document.createElement("canvas");
+    canvas.width = 100;
+    canvas.height = 100;
+    let context = canvas.getContext("2d");
+    const image = new Image();
+    image.onload = () => {
+      context.drawImage(image, 0, 0);
+      //   resolve(canvas);
+    };
+    image.src = src;
+    // });
+    return canvas;
   }
 
   function vecSubtract(vector, minus) {
@@ -77,9 +77,9 @@ let cursr = (function () {
 
   // Element factory
 
-  async function createElement(src, x, y, update) {
+  function createElement(src, x, y, update) {
     return {
-      image: await preRender(src),
+      image: preRender(src),
       x,
       y,
       velocity: { x: 0, y: 0 },
@@ -115,35 +115,25 @@ let cursr = (function () {
     let display = createDisplay();
     cursorSet(conifgs.img);
 
-    async function follow(configs, reference = display.cursor) {
-      let element = await createElement(
-        configs.img,
-        reference.x,
-        reference.y,
-        () => {
-          trail(element, display.cursor);
-        }
-      );
+    function follow(configs, reference = display.cursor) {
+      let element = createElement(configs.img, reference.x, reference.y, () => {
+        trail(element, display.cursor);
+      });
       display.addElement(element);
       return element;
     }
 
-    async function spring(configs, reference = display.cursor) {
-      let element = await createElement(
-        configs.img,
-        reference.x,
-        reference.y,
-        () => {
-          trail(element, display.cursor);
-        }
-      );
+    function spring(configs, reference = display.cursor) {
+      let element = createElement(configs.img, reference.x, reference.y, () => {
+        trail(element, display.cursor);
+      });
       display.addElement(element);
       return element;
     }
 
-    async function spawn(configs, reference = display.cursor) {
+    function spawn(configs, reference = display.cursor) {
       document.addEventListener("mousemove", async (e) => {
-        let element = await createElement(
+        let element = createElement(
           configs.img,
           reference.x,
           reference.y,
@@ -152,7 +142,6 @@ let cursr = (function () {
           }
         );
         display.addElement(element);
-        console.log(element);
         return element;
       });
     }
