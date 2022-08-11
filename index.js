@@ -16,10 +16,6 @@ let cursr = (function () {
   }
 
   function preRender(src) {
-    // let canvas = document.createElement("canvas");
-    // canvas.width = 100;
-    // canvas.height = 100;
-    // let context = canvas.getContext("2d");
     const image = new Image();
     image.src = src;
     return image;
@@ -75,6 +71,8 @@ let cursr = (function () {
 
   // Element factory
 
+  // Can I decompose this as well? Like the createDisplay factory?
+
   function createElement(src, x, y, update) {
     return {
       image: preRender(src),
@@ -97,6 +95,22 @@ let cursr = (function () {
       },
       valid: function valid() {
         return this.scale < this.scaleMax && this.count > this.countMin;
+      },
+    };
+  }
+
+  function createEffect(element, configs, reference) {
+    let scale = 1;
+    let scaleMax = 50;
+    let count = 100;
+    let countMin = 1;
+
+    return {
+      update: (element) => {
+        float(element);
+      },
+      complete: () => {
+        return false;
       },
     };
   }
