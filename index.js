@@ -81,7 +81,7 @@ let cursr = (function () {
       x,
       y,
       scale: 1,
-      scaleMax: 100,
+      scaleMax: 50,
       count: 100,
       countMin: 1,
       velocity: { x: 0, y: 0 },
@@ -89,8 +89,8 @@ let cursr = (function () {
       draw: function draw(context) {
         context.drawImage(
           this.image,
-          this.x,
-          this.y,
+          this.x - (this.image.width * this.scale - this.image.width) / 2,
+          this.y - (this.image.height * this.scale - this.image.height) / 2,
           this.image.width * this.scale,
           this.image.height * this.scale
         );
@@ -120,6 +120,10 @@ let cursr = (function () {
 
   function scale(element, percentage) {
     element.scale *= percentage;
+    element.x = element.x;
+    console.log(
+      (element.image.width * element.scale - element.image.width) / 2
+    );
   }
 
   // Main
