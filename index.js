@@ -86,9 +86,9 @@ let cursr = (function () {
   function createElement(update, configs) {
     configs = { ...defaults, ...configs };
     return {
-      image: preRender(configs.src),
       ...configs,
       update,
+      image: preRender(configs.src),
       draw: function draw(context) {
         context.drawImage(
           this.image,
@@ -116,8 +116,6 @@ let cursr = (function () {
 
     element.x += element.velocity.x;
     element.y += element.velocity.y;
-
-    console.log("hi");
   }
 
   function float(element) {
@@ -139,7 +137,6 @@ let cursr = (function () {
       let element = createElement(() => {
         trail(element, display.cursor);
       });
-      console.log(element);
       display.addElement(element);
     }
 
