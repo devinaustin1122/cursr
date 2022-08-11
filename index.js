@@ -16,16 +16,13 @@ let cursr = (function () {
   }
 
   function preRender(src) {
-    let canvas = document.createElement("canvas");
-    canvas.width = 100;
-    canvas.height = 100;
-    let context = canvas.getContext("2d");
+    // let canvas = document.createElement("canvas");
+    // canvas.width = 100;
+    // canvas.height = 100;
+    // let context = canvas.getContext("2d");
     const image = new Image();
-    image.onload = () => {
-      context.drawImage(image, 0, 0);
-    };
     image.src = src;
-    return canvas;
+    return image;
   }
 
   function vecSubtract(vector, minus) {
