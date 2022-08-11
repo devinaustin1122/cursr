@@ -71,7 +71,12 @@ let cursr = (function () {
 
   // Element factory
 
-  // Can I decompose this as well? Like the createDisplay factory?
+  let defaults = {
+    scale: 1,
+    scaleMax: 50,
+    count: 100,
+    countMin: 1,
+  };
 
   function createElement(src, x, y, update) {
     return {
@@ -94,23 +99,10 @@ let cursr = (function () {
         );
       },
       valid: function valid() {
-        return this.scale < this.scaleMax && this.count > this.countMin;
-      },
-    };
-  }
-
-  function createEffect(element, configs, reference) {
-    let scale = 1;
-    let scaleMax = 50;
-    let count = 100;
-    let countMin = 1;
-
-    return {
-      update: (element) => {
-        float(element);
-      },
-      complete: () => {
-        return false;
+        return (
+          defaults.scale < defaults.scaleMax &&
+          defaults.count > defaults.countMin
+        );
       },
     };
   }
@@ -135,9 +127,6 @@ let cursr = (function () {
   function scale(element, percentage) {
     element.scale *= percentage;
     element.x = element.x;
-    console.log(
-      (element.image.width * element.scale - element.image.width) / 2
-    );
   }
 
   // Main
