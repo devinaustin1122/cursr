@@ -81,17 +81,13 @@ let cursr = (function () {
     scaleMax: 10,
     countMax: 100,
     increment: 0,
-    update: () => {},
   };
 
-  function createElement(update, configs = defaults) {
+  function createElement(update, configs) {
+    configs = { ...defaults, ...configs };
     return {
       image: preRender(configs.src),
-      x: configs.x,
-      y: configs.y,
-      scale: configs.scale,
-      count: configs.count,
-      velocity: configs.velocity,
+      ...configs,
       update,
       draw: function draw(context) {
         context.drawImage(
@@ -104,7 +100,7 @@ let cursr = (function () {
         this.count += configs.increment;
       },
       valid: function valid() {
-        return this.scale < defaults.scaleMax && this.count < defaults.countMax;
+        return this.scale < configs.scaleMax && this.count < configs.countMax;
       },
     };
   }
@@ -139,11 +135,11 @@ let cursr = (function () {
     let display = createDisplay();
     cursorSet(conifgs.img);
 
-    // I'm still thinking that we can add
     function addEffect() {
       let element = createElement(() => {
         trail(element, display.cursor);
       });
+      console.log(element);
       display.addElement(element);
     }
 
