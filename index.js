@@ -23,10 +23,8 @@ let cursr = (function () {
     const image = new Image();
     image.onload = () => {
       context.drawImage(image, 0, 0);
-      //   resolve(canvas);
     };
     image.src = src;
-    // });
     return canvas;
   }
 
@@ -61,6 +59,9 @@ let cursr = (function () {
       },
 
       updateElements: function updateElements() {
+        elements = elements.filter((element) => {
+          return element.valid();
+        });
         elements.forEach((element) => {
           element.update();
         });
@@ -82,10 +83,23 @@ let cursr = (function () {
       image: preRender(src),
       x,
       y,
+      scale: 1,
+      scaleMax: 100,
+      count: 100,
+      countMin: 1,
       velocity: { x: 0, y: 0 },
       update,
       draw: function draw(context) {
-        context.drawImage(this.image, this.x, this.y);
+        context.drawImage(
+          this.image,
+          this.x,
+          this.y,
+          this.image.width * this.scale,
+          this.image.height * this.scale
+        );
+      },
+      valid: function valid() {
+        return this.scale < this.scaleMax && this.count > this.countMin;
       },
     };
   }
@@ -94,8 +108,6 @@ let cursr = (function () {
 
   function trail(element, cursor) {
     let difference = vecSubtract(cursor, element);
-    // element.x += difference.x * 0.1;
-    // element.y += difference.y * 0.1;
     element.velocity.x += difference.x * 0.1;
     element.velocity.y += difference.y * 0.1;
     element.velocity.x *= 0.9;
@@ -107,6 +119,10 @@ let cursr = (function () {
 
   function float(element) {
     element.y--;
+  }
+
+  function scale(element, percentage) {
+    element.scale *= percentage;
   }
 
   // Main
@@ -138,7 +154,8 @@ let cursr = (function () {
           reference.x,
           reference.y,
           () => {
-            float(spawn);
+            float(element);
+            scale(element, 1.1);
           }
         );
         display.addElement(element);
