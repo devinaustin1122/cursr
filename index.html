@@ -10,8 +10,7 @@
   <body>
     <script>
       let cursor = cursr({ img: "mouse.svg" });
-      let spring = cursor.spring({ img: "mouse.svg" });
-      cursor.spawn({ img: "mouse.svg" }, spring);
+      let spring = cursor.addEffect();
       cursor.start();
     </script>
   </body>

@@ -72,22 +72,26 @@ let cursr = (function () {
   // Element factory
 
   let defaults = {
+    src: "mouse.svg",
+    x: 0,
+    y: 0,
     scale: 1,
-    scaleMax: 50,
-    count: 100,
-    countMin: 1,
+    count: 0,
+    velocity: { x: 0, y: 0 },
+    scaleMax: 10,
+    countMax: 100,
+    increment: 0,
+    update: () => {},
   };
 
-  function createElement(src, x, y, update) {
+  function createElement(update, configs = defaults) {
     return {
-      image: preRender(src),
-      x,
-      y,
-      scale: 1,
-      scaleMax: 50,
-      count: 100,
-      countMin: 1,
-      velocity: { x: 0, y: 0 },
+      image: preRender(configs.src),
+      x: configs.x,
+      y: configs.y,
+      scale: configs.scale,
+      count: configs.count,
+      velocity: configs.velocity,
       update,
       draw: function draw(context) {
         context.drawImage(
@@ -97,12 +101,10 @@ let cursr = (function () {
           this.image.width * this.scale,
           this.image.height * this.scale
         );
+        this.count += configs.increment;
       },
       valid: function valid() {
-        return (
-          defaults.scale < defaults.scaleMax &&
-          defaults.count > defaults.countMin
-        );
+        return this.scale < defaults.scaleMax && this.count < defaults.countMax;
       },
     };
   }
@@ -118,6 +120,8 @@ let cursr = (function () {
 
     element.x += element.velocity.x;
     element.y += element.velocity.y;
+
+    console.log("hi");
   }
 
   function float(element) {
@@ -135,37 +139,45 @@ let cursr = (function () {
     let display = createDisplay();
     cursorSet(conifgs.img);
 
-    function follow(configs, reference = display.cursor) {
-      let element = createElement(configs.img, reference.x, reference.y, () => {
+    // I'm still thinking that we can add
+    function addEffect() {
+      let element = createElement(() => {
         trail(element, display.cursor);
       });
       display.addElement(element);
-      return element;
     }
 
-    function spring(configs, reference = display.cursor) {
-      let element = createElement(configs.img, reference.x, reference.y, () => {
-        trail(element, display.cursor);
-      });
-      display.addElement(element);
-      return element;
-    }
+    // function follow(configs, reference = display.cursor) {
+    //   let element = createElement(configs.img, reference.x, reference.y, () => {
+    //     trail(element, display.cursor);
+    //   });
+    //   display.addElement(element);
+    //   return element;
+    // }
 
-    function spawn(configs, reference = display.cursor) {
-      document.addEventListener("mousemove", async (e) => {
-        let element = createElement(
-          configs.img,
-          reference.x,
-          reference.y,
-          () => {
-            float(element);
-            scale(element, 1.1);
-          }
-        );
-        display.addElement(element);
-        return element;
-      });
-    }
+    // function spring(configs, reference = display.cursor) {
+    //   let element = createElement(configs.img, reference.x, reference.y, () => {
+    //     trail(element, display.cursor);
+    //   });
+    //   display.addElement(element);
+    //   return element;
+    // }
+
+    // function spawn(configs, reference = display.cursor) {
+    //   document.addEventListener("mousemove", async (e) => {
+    //     let element = createElement(
+    //       configs.img,
+    //       reference.x,
+    //       reference.y,
+    //       () => {
+    //         float(element);
+    //         // scale(element, 1.1);
+    //       }
+    //     );
+    //     display.addElement(element);
+    //     return element;
+    //   });
+    // }
 
     function start() {
       function loop() {
@@ -176,7 +188,7 @@ let cursr = (function () {
       loop();
     }
 
-    return { follow, spring, spawn, start };
+    return { addEffect, start };
   }
 
   return cursr;
